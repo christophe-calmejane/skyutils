@@ -694,6 +694,28 @@ SKYUTILS_API bool SU_SetSocketBlocking(SU_SOCKET sock,bool Block)
 #endif /* _WIN32 */
 }
 
+SKYUTILS_API bool SU_SplitIPv4(const char *IPin,unsigned char IPout[4])
+{
+	unsigned int f1,f2,f3,f4;
+#define CHECK_INVALID_VALUE(x) if(x >= 256) return false
+	
+	if(sscanf(IPin,"%d.%d.%d.%d",&f1,&f2,&f3,&f4) != 4)
+		return false;
+	
+	CHECK_INVALID_VALUE(f1);
+	CHECK_INVALID_VALUE(f2);
+	CHECK_INVALID_VALUE(f3);
+	CHECK_INVALID_VALUE(f4);
+	
+	IPout[0] = f1;
+	IPout[1] = f2;
+	IPout[2] = f3;
+	IPout[3] = f4;
+	
+#undef CHECK_INVALID_VALUE
+  return true;
+}
+
 SKYUTILS_API bool SU_SplitMAC(const char *MACin,unsigned char MACout[6])
 {
   unsigned int f1,f2,f3,f4,f5,f6;

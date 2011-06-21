@@ -22,7 +22,7 @@
 #ifndef __SKY_UTILS_H__
 #define __SKY_UTILS_H__
 
-#define SKYUTILS_VERSION "3.68"
+#define SKYUTILS_VERSION "3.69"
 #define SKYUTILS_AUTHOR "Christophe Calméjane"
 
 #if defined(__MACH__) || defined(_AIX)
@@ -295,6 +295,7 @@ SKYUTILS_API int SU_UDPReceiveFromSin(SU_PServerInfo SI,char *Text,int len,struc
 SKYUTILS_API int SU_SetSocketOpt(SU_SOCKET sock,int Opt,int value); /* SOCKET_ERROR on Error */
 SKYUTILS_API int SU_SetTcpOpt(SU_SOCKET sock,int Opt,int value); /* SOCKET_ERROR on Error */
 SKYUTILS_API bool SU_SetSocketBlocking(SU_SOCKET sock,bool Block); /* True on Success */
+SKYUTILS_API bool SU_SplitIPv4(const char *IPin,unsigned char IPout[4]); /* Converts an IPv4 as string to an array */
 SKYUTILS_API bool SU_SplitMAC(const char *MACin,unsigned char MACout[6]); /* Converts a MAC as string to an array */
 SKYUTILS_API bool SU_WakeUpComputer(const char *IP,const char *port,const char *MAC); /* Wakes a computer from LAN */
 SKYUTILS_API bool SU_SockInit(int Major,int Minor); /* Inits Socks (MUST BE CALL BEFORE ANY OTHER FUNCTION) */
