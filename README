@@ -1,0 +1,18 @@
+SkyUtils Library Version 2.9
+(c) Christophe CALMEJANE 'Ze KiLleR / SkyTech'
+URL    : http://zekiller.skytech.org
+mailto : zekiller[AT]skytech[DOT]org
+
+This package contains utils functions that I use in many
+of my projects. From chained list to HTTP protocol, you
+may find many useful functions.
+
+I> Compilation
+  Run configure script './configure', then 'make'
+
+II> Installation
+  Become root, and type 'make install'.
+
+II> Uninstall
+  Type 'make uninstall'.
+

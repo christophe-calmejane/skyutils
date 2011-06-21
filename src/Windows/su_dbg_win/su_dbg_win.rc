@@ -1,0 +1,302 @@
+//Microsoft Developer Studio generated resource script.
+//
+#include "resource.h"
+
+#define APSTUDIO_READONLY_SYMBOLS
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 2 resource.
+//
+#include "windows.h"
+#define IDC_STATIC (-1)
+
+/////////////////////////////////////////////////////////////////////////////
+#undef APSTUDIO_READONLY_SYMBOLS
+
+/////////////////////////////////////////////////////////////////////////////
+// French (France) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_FRA)
+#ifdef _WIN32
+LANGUAGE LANG_FRENCH, SUBLANG_FRENCH
+#pragma code_page(1252)
+#endif //_WIN32
+
+#ifdef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// TEXTINCLUDE
+//
+
+1 TEXTINCLUDE DISCARDABLE 
+BEGIN
+    "resource.h\0"
+END
+
+2 TEXTINCLUDE DISCARDABLE 
+BEGIN
+    "#include ""afxres.h""\r\n"
+    "\0"
+END
+
+3 TEXTINCLUDE DISCARDABLE 
+BEGIN
+    "\r\n"
+    "\0"
+END
+
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+IDD_DIALOG1 DIALOG DISCARDABLE  0, 0, 672, 286
+STYLE WS_MINIMIZEBOX | WS_MAXIMIZEBOX | WS_POPUP | WS_CAPTION | WS_SYSMENU | 
+    WS_THICKFRAME
+CAPTION "Dialog"
+MENU IDR_MENU1
+FONT 8, "MS Sans Serif"
+BEGIN
+    DEFPUSHBUTTON   "Cle&ar",IDC_BUTTON1,267,265,50,14
+    PUSHBUTTON      "&Config",IDC_BUTTON2,353,265,50,14
+    LISTBOX         IDC_LIST1,7,7,658,249,LBS_OWNERDRAWFIXED | 
+                    LBS_HASSTRINGS | LBS_NOINTEGRALHEIGHT | 
+                    LBS_DISABLENOSCROLL | WS_VSCROLL | WS_TABSTOP
+    CONTROL         "Autoscroll",IDC_SCROLL,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,7,269,47,10
+    CONTROL         "Capture",IDC_CAPTURE,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,624,269,41,10
+END
+
+IDD_DIALOG2 DIALOG DISCARDABLE  0, 0, 190, 231
+STYLE DS_SYSMODAL | DS_MODALFRAME | DS_CENTERMOUSE | WS_POPUP | WS_CAPTION | 
+    WS_SYSMENU
+CAPTION "Configuration"
+FONT 8, "MS Sans Serif"
+BEGIN
+    DEFPUSHBUTTON   "&OK",IDOK,70,210,50,14
+    CONTROL         "",IDC_CHECK1,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,7,
+                    10,10
+    CONTROL         "",IDC_CHECK2,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,23,
+                    10,10
+    CONTROL         "",IDC_CHECK3,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,39,
+                    10,10
+    CONTROL         "",IDC_CHECK4,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,55,
+                    10,10
+    CONTROL         "",IDC_CHECK5,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,71,
+                    10,10
+    CONTROL         "",IDC_CHECK6,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,87,
+                    10,10
+    CONTROL         "",IDC_CHECK7,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,
+                    103,10,10
+    CONTROL         "",IDC_CHECK8,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,
+                    117,10,10
+    CONTROL         "",IDC_CHECK9,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,
+                    133,10,10
+    CONTROL         "",IDC_CHECK10,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,
+                    149,10,10
+    CONTROL         "",IDC_CHECK11,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,
+                    165,10,10
+    CONTROL         "",IDC_CHECK12,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,
+                    181,10,10
+    CONTROL         "",IDC_CHECK13,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,
+                    197,10,10
+    PUSHBUTTON      "&Clear",IDC_BUTTON1,98,184,40,14
+    PUSHBUTTON      "&Set",IDC_BUTTON2,141,184,40,14
+    LTEXT           "Message 0x000001",IDC_STATIC1,19,7,72,12,SS_NOTIFY
+    LTEXT           "Message 0x000002",IDC_STATIC2,19,23,72,12,SS_NOTIFY
+    LTEXT           "Message 0x000004",IDC_STATIC3,19,39,72,12,SS_NOTIFY
+    LTEXT           "Message 0x000008",IDC_STATIC4,19,55,72,12,SS_NOTIFY
+    LTEXT           "Message 0x000010",IDC_STATIC5,19,71,72,12,SS_NOTIFY
+    LTEXT           "Message 0x000020",IDC_STATIC6,19,87,72,12,SS_NOTIFY
+    LTEXT           "Message 0x000040",IDC_STATIC7,19,103,72,12,SS_NOTIFY
+    LTEXT           "Message 0x000080",IDC_STATIC8,19,117,72,12,SS_NOTIFY
+    LTEXT           "Message 0x000100",IDC_STATIC9,19,133,72,12,SS_NOTIFY
+    LTEXT           "Message 0x000200",IDC_STATIC10,19,149,72,12,SS_NOTIFY
+    LTEXT           "Message 0x000400",IDC_STATIC11,19,165,72,12,SS_NOTIFY
+    LTEXT           "Message 0x000800",IDC_STATIC12,19,181,72,12,SS_NOTIFY
+    LTEXT           "Message 0x001000",IDC_STATIC13,19,197,72,12,SS_NOTIFY
+    CONTROL         "",IDC_CHECK14,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,97,
+                    7,10,10
+    CONTROL         "",IDC_CHECK15,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,97,
+                    23,10,10
+    CONTROL         "",IDC_CHECK16,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,97,
+                    39,10,10
+    CONTROL         "",IDC_CHECK17,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,97,
+                    55,10,10
+    CONTROL         "",IDC_CHECK18,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,97,
+                    71,10,10
+    CONTROL         "",IDC_CHECK19,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,97,
+                    87,10,10
+    CONTROL         "",IDC_CHECK20,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,97,
+                    103,10,10
+    CONTROL         "",IDC_CHECK21,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,97,
+                    117,10,10
+    CONTROL         "",IDC_CHECK22,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,97,
+                    133,10,10
+    CONTROL         "",IDC_CHECK23,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,97,
+                    149,10,10
+    CONTROL         "",IDC_CHECK24,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,97,
+                    165,10,10
+    LTEXT           "Message 0x002000",IDC_STATIC14,109,7,72,12,SS_NOTIFY
+    LTEXT           "Message 0x004000",IDC_STATIC15,109,23,72,12,SS_NOTIFY
+    LTEXT           "Message 0x008000",IDC_STATIC16,109,39,72,12,SS_NOTIFY
+    LTEXT           "Message 0x010000",IDC_STATIC17,109,55,72,12,SS_NOTIFY
+    LTEXT           "Message 0x020000",IDC_STATIC18,109,71,72,12,SS_NOTIFY
+    LTEXT           "Message 0x040000",IDC_STATIC19,109,87,72,12,SS_NOTIFY
+    LTEXT           "Message 0x080000",IDC_STATIC20,109,103,72,12,SS_NOTIFY
+    LTEXT           "Message 0x100000",IDC_STATIC21,109,117,72,12,SS_NOTIFY
+    LTEXT           "Message 0x200000",IDC_STATIC22,109,133,72,12,SS_NOTIFY
+    LTEXT           "Message 0x400000",IDC_STATIC23,109,149,72,12,SS_NOTIFY
+    LTEXT           "Message 0x800000",IDC_STATIC24,109,165,72,12,SS_NOTIFY
+END
+
+IDD_DIALOG4 DIALOG DISCARDABLE  0, 0, 186, 95
+STYLE DS_CENTERMOUSE | WS_POPUP | WS_CAPTION
+CAPTION "About su_dbg_win"
+FONT 8, "MS Sans Serif"
+BEGIN
+    DEFPUSHBUTTON   "&Close",IDOK,67,74,50,14
+    GROUPBOX        "",IDC_STATIC,7,7,171,62
+    CTEXT           "Copyright",IDC_COPYRIGHT,15,15,155,49
+END
+
+IDD_DIALOG5 DIALOG DISCARDABLE  0, 0, 229, 95
+STYLE DS_CENTERMOUSE | WS_POPUP | WS_CAPTION
+CAPTION "Help"
+FONT 8, "MS Sans Serif"
+BEGIN
+    DEFPUSHBUTTON   "OK",IDOK,89,74,50,14
+    GROUPBOX        "",IDC_STATIC,7,7,215,61
+    CTEXT           "",IDC_HELP1,14,14,200,48
+END
+
+IDD_DIALOG6 DIALOG DISCARDABLE  0, 0, 156, 79
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Change message properties"
+FONT 8, "MS Sans Serif"
+BEGIN
+    DEFPUSHBUTTON   "&OK",IDOK,22,58,50,14
+    PUSHBUTTON      "&Cancel",IDCANCEL,84,58,50,14
+    EDITTEXT        IDC_MSG_NAME,43,7,92,13
+    LTEXT           "Name",IDC_STATIC,19,8,20,8
+    LTEXT           "Message Color",IDC_MSG_COLOR,31,30,56,11
+    PUSHBUTTON      "Ch&ange",IDC_CHANGE_COLOR,90,28,34,14
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// DESIGNINFO
+//
+
+#ifdef APSTUDIO_INVOKED
+GUIDELINES DESIGNINFO DISCARDABLE 
+BEGIN
+    IDD_DIALOG1, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 665
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 279
+    END
+
+    IDD_DIALOG2, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 181
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 224
+    END
+
+    IDD_DIALOG4, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 178
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 88
+    END
+
+    IDD_DIALOG5, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 222
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 88
+    END
+
+    IDD_DIALOG6, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 149
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 72
+    END
+END
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Menu
+//
+
+IDR_MENU1 MENU DISCARDABLE 
+BEGIN
+    POPUP "&File"
+    BEGIN
+        MENUITEM "&Save buffer\tCtrl-S",        ID_FILE_SAVEBUFFER
+        MENUITEM "Save &As...",                 ID_FILE_SAVEAS
+        MENUITEM SEPARATOR
+        MENUITEM "E&xit\tCtrl-X",               ID_FILE_EXIT
+    END
+    POPUP "&Edit"
+    BEGIN
+        MENUITEM "&Find...\tCtrl-F",            ID_EDIT_SEARCH
+        MENUITEM "Find &Next\tF3",              ID_EDIT_FINDNEXT
+        MENUITEM "Find &Previous\tShift-F3",    ID_EDIT_FINDNEXT_R
+    END
+    POPUP "&Help"
+    BEGIN
+        MENUITEM "&Help...\tF1",                ID_HELP_HELP
+        MENUITEM "&About...\tF10",              ID_HELP_ABOUT
+    END
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Accelerator
+//
+
+IDR_ACCELERATOR1 ACCELERATORS DISCARDABLE 
+BEGIN
+    "A",            IDC_BUTTON1,            VIRTKEY, ALT, NOINVERT
+    "C",            IDC_BUTTON2,            VIRTKEY, ALT, NOINVERT
+    "F",            ID_EDIT_SEARCH,         VIRTKEY, CONTROL, NOINVERT
+    "S",            ID_FILE_SAVEBUFFER,     VIRTKEY, CONTROL, NOINVERT
+    VK_F1,          ID_HELP_HELP,           VIRTKEY, NOINVERT
+    VK_F10,         ID_HELP_ABOUT,          VIRTKEY, NOINVERT
+    VK_F3,          ID_EDIT_FINDNEXT,       VIRTKEY, NOINVERT
+    VK_F3,          ID_EDIT_FINDNEXT_R,     VIRTKEY, SHIFT, NOINVERT
+    "X",            ID_FILE_EXIT,           VIRTKEY, CONTROL, NOINVERT
+END
+
+#endif    // French (France) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+
+#ifndef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 3 resource.
+//
+
+
+/////////////////////////////////////////////////////////////////////////////
+#endif    // not APSTUDIO_INVOKED
+
