@@ -1,7 +1,7 @@
 
     SkyUtils library.
 
-    Copyright (C) 1999'07 Christophe 'Ze KiLleR' Calmejane
+    Copyright (C) 1999'2011 Christophe 'Ze KiLleR' Calmejane
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Lesser General Public Licence
@@ -23,10 +23,6 @@
     If you would like to use this library in a commercial way, you must
     contact the development team.
 
-    Official SkyUtils Website :
-
-      http://zekiller.skytech.org
-
     Mail of development team :
 
-      zekiller[AT]skytech[DOT]org
+      dakikifr[AT]free[DOT]fr
