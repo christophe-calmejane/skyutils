@@ -22,7 +22,7 @@
 #ifndef __SKY_UTILS_H__
 #define __SKY_UTILS_H__
 
-#define SKYUTILS_VERSION "3.69"
+#define SKYUTILS_VERSION "3.70"
 #define SKYUTILS_AUTHOR "Christophe Calméjane"
 
 #if defined(__MACH__) || defined(_AIX)
@@ -302,6 +302,7 @@ SKYUTILS_API bool SU_SockInit(int Major,int Minor); /* Inits Socks (MUST BE CALL
 SKYUTILS_API void SU_SockUninit(void); /* Uninits Socks (MUST BE CALL BEFORE EXITING) */
 #ifdef _WIN32
 #define SU_CLOSE_SOCKET(x) closesocket(x)
+#define SU_ECONNABORTED WSAECONNABORTED
 #define SU_EAGAIN WSAEWOULDBLOCK
 #define SU_ENOBUFS WSAENOBUFS
 #define SU_errno WSAGetLastError()
@@ -309,6 +310,7 @@ SKYUTILS_API void SU_SockUninit(void); /* Uninits Socks (MUST BE CALL BEFORE EXI
 #define SU_ioctl ioctlsocket
 #else /* !_WIN32 */
 #define SU_CLOSE_SOCKET(x) close(x)
+#define SU_ECONNABORTED ECONNABORTED
 #define SU_EAGAIN EAGAIN
 #define SU_ENOBUFS ENOBUFS
 #define SU_seterrno(x) errno = x
