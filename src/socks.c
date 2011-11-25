@@ -81,7 +81,7 @@ SKYUTILS_API char *SU_AdrsOfPort(char *Host)
 
 SKYUTILS_API unsigned int SU_GetSocketPort(SU_SOCKET sock)
 {
-  int len;
+  SU_SOCKLEN_T len;
   struct sockaddr_in SAddr;
 
   len = sizeof(SAddr);
@@ -284,7 +284,7 @@ SKYUTILS_API void SU_SendTCPBufferToMultiSocket(SU_PMultiSocket socks,char *buf,
 SKYUTILS_API SU_PServerInfo SU_CreateServer(int port,int type,bool ReUseAdrs)
 {
   SU_PServerInfo SI;
-  int len;
+  SU_SOCKLEN_T len;
 
   SI = (SU_PServerInfo) malloc(sizeof(SU_TServerInfo));
   memset(SI,0,sizeof(SU_TServerInfo));
@@ -360,7 +360,7 @@ SKYUTILS_API int SU_ServerListen(SU_PServerInfo SI)
 SKYUTILS_API SU_PClientSocket SU_ServerAcceptConnection(SU_PServerInfo SI)
 {
   struct sockaddr sad;
-  int len;
+  SU_SOCKLEN_T len;
   SU_SOCKET tmpsock;
   SU_PClientSocket CS;
 
@@ -524,7 +524,7 @@ SKYUTILS_API int SU_UDPSendBroadcast(SU_PServerInfo SI,char *Text,int len,char *
     return SOCKET_ERROR;
 #ifdef DEBUG
   {
-    int si = sizeof(int);
+    SU_SOCKLEN_T si = sizeof(int);
     if(getsockopt(SI->sock,SOL_SOCKET,SO_BROADCAST,(char *)&i,&si) == SOCKET_ERROR)
       return SOCKET_ERROR;
     if(i == 0)
@@ -612,7 +612,7 @@ SKYUTILS_API int SU_UDPSendToSin(SU_PServerInfo SI,char *Text,int len,struct soc
 SKYUTILS_API int SU_UDPReceiveFrom(SU_PServerInfo SI,char *Text,int len,char **ip,int Blocking)
 {
    struct sockaddr_in sin;
-   int ssin;
+   SU_SOCKLEN_T ssin;
    int i;
    struct hostent *hp;
 
@@ -644,7 +644,7 @@ SKYUTILS_API int SU_UDPReceiveFromSin(SU_PServerInfo SI,char *Text,int len,struc
 {
    struct sockaddr_in sin;
    int i;
-   int ssin;
+   SU_SOCKLEN_T ssin;
 
   if(SI == NULL)
     return SOCKET_ERROR;
@@ -769,13 +769,13 @@ SKYUTILS_API bool SU_WakeUpComputer(const char *IP,const char *port,const char *
     /* Enable broadcast on socket */
     SU_SetSocketOpt(SI->sock,SO_BROADCAST,1);
     /* Send magic packet */
-    if(SU_UDPSendBroadcast(SI,MagicPacket,sizeof(MagicPacket),(char *)port) == -1)
+    if(SU_UDPSendBroadcast(SI,(char *)MagicPacket,sizeof(MagicPacket),(char *)port) == -1)
       result = false;
   }
   else /* Targeted IP */
   {
     /* Send magic packet */
-    if(SU_UDPSendToAddr(SI,MagicPacket,sizeof(MagicPacket),(char *)IP,(char *)port) == -1)
+    if(SU_UDPSendToAddr(SI,(char *)MagicPacket,sizeof(MagicPacket),(char *)IP,(char *)port) == -1)
       result = false;
   }
   /* Free resources */

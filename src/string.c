@@ -508,7 +508,8 @@ SKYUTILS_API char *SU_strchrl(const char *s,const char *l,char *found)
 
 SKYUTILS_API char *SU_strrchrl(const char *s,const char *l,char *found)
 {
-  size_t len,i,j;
+  size_t len,i;
+  int j;
 
   len = strlen(l);
   for(j=strlen(s)-1;j>=0;j--)
