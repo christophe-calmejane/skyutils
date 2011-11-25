@@ -22,7 +22,7 @@
 #ifndef __SKY_UTILS_H__
 #define __SKY_UTILS_H__
 
-#define SKYUTILS_VERSION "3.70"
+#define SKYUTILS_VERSION "3.71"
 #define SKYUTILS_AUTHOR "Christophe Calméjane"
 
 #if defined(__MACH__) || defined(_AIX)
@@ -722,7 +722,7 @@ SKYUTILS_API extern SU_PList SW_Cookies; /* SU_PCookie */
 #define SU_CRITICAL_LEAVE(x) pthread_mutex_unlock(&(x))
 #define SU_CRITICAL_TRY_AND_ENTER(x) (pthread_mutex_trylock(&(x)) == 0)
 #else /* !__unix__ */
-#define SU_THREAD_HANDLE unsigned long
+#define SU_THREAD_HANDLE HANDLE
 #define SU_THREAD_ID unsigned int
 #define SU_THREAD_NULL 0
 #define SU_THREAD_ROUTINE_TYPE(x) unsigned (__stdcall *x)(void *)
