@@ -22,7 +22,7 @@
 #ifndef __SKY_UTILS_H__
 #define __SKY_UTILS_H__
 
-#define SKYUTILS_VERSION "3.72"
+#define SKYUTILS_VERSION "3.73"
 #define SKYUTILS_AUTHOR "Christophe Calméjane"
 
 #if defined(__MACH__) || defined(_AIX)
@@ -75,7 +75,11 @@ typedef unsigned int bool;
 #include <netinet/tcp.h>
 #define SU_SOCKET int
 #define SU_INVALID_SOCKET (-1)
+#ifdef __APPLE__
 #define SU_SOCKLEN_T socklen_t
+#else /* !__APPLE__ */
+#define SU_SOCKLEN_T int
+#endif /* __APPLE */
 #define SKYUTILS_API
 
 #else /* _WIN32 */
