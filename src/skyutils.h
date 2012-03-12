@@ -22,7 +22,13 @@
 #ifndef __SKY_UTILS_H__
 #define __SKY_UTILS_H__
 
-#define SKYUTILS_VERSION "3.73"
+/* Overriding FD_SETSIZE */
+#ifdef FD_SETSIZE
+#undef FD_SETSIZE
+#endif /* FD_SETSIZE */
+#define FD_SETSIZE 256
+
+#define SKYUTILS_VERSION "3.74"
 #define SKYUTILS_AUTHOR "Christophe Calméjane"
 
 #if defined(__MACH__) || defined(_AIX)

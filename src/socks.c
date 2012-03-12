@@ -367,9 +367,19 @@ SKYUTILS_API SU_PClientSocket SU_ServerAcceptConnection(SU_PServerInfo SI)
   if(SI == NULL)
     return NULL;
   len = sizeof(sad);
-  tmpsock = accept(SI->sock,&sad,&len);
-  if(tmpsock == SU_INVALID_SOCKET)
-    return NULL;
+  while(true)
+  {
+    tmpsock = accept(SI->sock,&sad,&len);
+    if(tmpsock == SU_INVALID_SOCKET)
+    {
+#ifndef _WIN32
+      if(errno == EINTR) /* 'Accept' might be interrupted by a system call, we need to ignore the returned error */
+        continue;
+#endif /* !_WIN32 */
+      return NULL;
+    }
+    break; /* Only here to handle the EINTR error */
+  }
   CS = (SU_PClientSocket) malloc(sizeof(SU_TClientSocket));
   memset(CS,0,sizeof(SU_TClientSocket));
   CS->sock = tmpsock;
@@ -398,7 +408,7 @@ SKYUTILS_API int SU_ServerAcceptConnectionWithTimeout(SU_PServerInfo SI,struct t
       {
         return 0;
       }
-      else if(ret == -1) /* Select error */
+      else if(ret == SU_INVALID_SOCKET) /* Select error */
       {
 #ifndef _WIN32
         if(errno == EINTR) /* 'Select' might be interrupted by a system call, we need to ignore the returned error */
