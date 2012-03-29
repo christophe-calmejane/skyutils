@@ -28,7 +28,7 @@
 #endif /* FD_SETSIZE */
 #define FD_SETSIZE 256
 
-#define SKYUTILS_VERSION "3.74"
+#define SKYUTILS_VERSION "3.75"
 #define SKYUTILS_AUTHOR "Christophe Calméjane"
 
 #if defined(__MACH__) || defined(_AIX)
@@ -733,6 +733,9 @@ SKYUTILS_API extern SU_PList SW_Cookies; /* SU_PCookie */
 #define SU_CRITICAL_ENTER(x) pthread_mutex_lock(&(x))
 #define SU_CRITICAL_LEAVE(x) pthread_mutex_unlock(&(x))
 #define SU_CRITICAL_TRY_AND_ENTER(x) (pthread_mutex_trylock(&(x)) == 0)
+#define SU_THREAD_PRIORITY_NORMAL 0
+#define SU_THREAD_PRIORITY_ABOVE_NORMAL 1
+#define SU_THREAD_PRIORITY_BELOW_NORMAL -1
 #else /* !__unix__ */
 #define SU_THREAD_HANDLE HANDLE
 #define SU_THREAD_ID unsigned int
@@ -761,9 +764,15 @@ SKYUTILS_API extern SU_PList SW_Cookies; /* SU_PCookie */
 #define SU_CRITICAL_ENTER(x) EnterCriticalSection(&(x))
 #define SU_CRITICAL_LEAVE(x) LeaveCriticalSection(&(x))
 #define SU_CRITICAL_TRY_AND_ENTER(x) (TryEnterCriticalSection(&(x)) != 0)
+#define SU_THREAD_PRIORITY_NORMAL THREAD_PRIORITY_NORMAL
+#define SU_THREAD_PRIORITY_ABOVE_NORMAL THREAD_PRIORITY_ABOVE_NORMAL
+#define SU_THREAD_PRIORITY_BELOW_NORMAL THREAD_PRIORITY_BELOW_NORMAL
 #endif /* __unix__ */
 /* Create a new thread */
 SKYUTILS_API bool SU_CreateThread(SU_THREAD_HANDLE *Handle,SU_THREAD_ID *ThreadId,SU_THREAD_ROUTINE_TYPE(Entry),void *User,bool Detached); /* True on success */
+
+/* Set a thread's priority */
+SKYUTILS_API bool SU_SetThreadPriority(SU_THREAD_HANDLE Handle,int Priority);
 
 /* Kill the specified thread */
 SKYUTILS_API void SU_KillThread(SU_THREAD_HANDLE Handle);

@@ -33,7 +33,7 @@
 SKYUTILS_API bool SU_CreateThread(SU_THREAD_HANDLE *Handle,SU_THREAD_ID *ThreadId,SU_THREAD_ROUTINE_TYPE(Entry),void *User,bool Detached)
 {
 #ifdef _WIN32
-  *Handle = _beginthreadex(NULL,0,Entry,User,0,ThreadId);
+  *Handle = (SU_THREAD_HANDLE)_beginthreadex(NULL,0,Entry,User,0,ThreadId);
   return ((*Handle) != 0); /* _beginthreadex returns 0 on error, while _beginthread returns -1 */
 #else /* !_WIN32 */
   if(pthread_create(Handle,NULL,Entry,User) != 0)
@@ -42,6 +42,29 @@ SKYUTILS_API bool SU_CreateThread(SU_THREAD_HANDLE *Handle,SU_THREAD_ID *ThreadI
   if(Detached)
     pthread_detach(*Handle);
   return true;
+#endif /* _WIN32 */
+}
+
+SKYUTILS_API bool SU_SetThreadPriority(SU_THREAD_HANDLE Handle,int Priority)
+{
+#ifdef _WIN32
+  return SetThreadPriority(Handle,Priority) != 0;
+#else /* !_WIN32 */
+#if 0
+  return pthread_setschedprio(Handle,Priority) == 0;
+#else /* !0 */
+  // Tempo pour tester si ca marche !
+  if(pthread_setschedprio(Handle,Priority) == 0)
+  {
+    struct sched_param sp;
+    if(pthread_attr_getschedparam(attr,&sp) == 0)
+    {
+      if(sp.sched_priority == Priority)
+        return true;
+    }
+  }
+  return false;
+#endif /* 0 */
 #endif /* _WIN32 */
 }
 
