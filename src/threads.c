@@ -50,21 +50,21 @@ SKYUTILS_API bool SU_SetThreadPriority(SU_THREAD_HANDLE Handle,int Priority)
 #ifdef _WIN32
   return SetThreadPriority(Handle,Priority) != 0;
 #else /* !_WIN32 */
-#if 0
-  return pthread_setschedprio(Handle,Priority) == 0;
-#else /* !0 */
-  // Tempo pour tester si ca marche !
-  if(pthread_setschedprio(Handle,Priority) == 0)
+  int policy;
+  struct sched_param sp;
+  if(pthread_getschedparam(Handle,&policy,&sp) == 0) // Get current policy
   {
-    struct sched_param sp;
-    if(pthread_attr_getschedparam(attr,&sp) == 0)
+    sp.sched_priority = Priority;
+    if(pthread_setschedparam(Handle,policy,&sp) == 0) // Modify priority, keeping current policy
     {
-      if(sp.sched_priority == Priority)
+      if(pthread_getschedparam(Handle,&policy,&sp) == 0) // Check if priority was correctly changed (tempo check)
+      {
+        if(sp.sched_priority == Priority)
         return true;
+      }
     }
   }
   return false;
-#endif /* 0 */
 #endif /* _WIN32 */
 }
 
