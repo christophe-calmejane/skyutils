@@ -760,6 +760,8 @@ SKYUTILS_API bool SU_WakeUpComputer(const char *IP,const char *port,const char *
   unsigned char MACasInt[6];
   bool result = true;
 
+  if(MAC == NULL || MAC[0] == 0)
+    return false;
   if(!SU_SplitMAC(MAC,MACasInt))
     return false;
 
@@ -774,6 +776,8 @@ SKYUTILS_API bool SU_WakeUpComputer(const char *IP,const char *port,const char *
       MagicPacket[6+j*6+i] = MACasInt[i];
   }
 
+  if(port == NULL)
+    port = "9";
   if(IP == NULL) /* Broadcast */
   {
     /* Enable broadcast on socket */
@@ -791,7 +795,7 @@ SKYUTILS_API bool SU_WakeUpComputer(const char *IP,const char *port,const char *
   /* Free resources */
   SU_FreeSI(SI);
 
-  return true;
+  return result;
 }
 
 #ifdef _WIN32
