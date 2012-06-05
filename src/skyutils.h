@@ -28,7 +28,7 @@
 #endif /* FD_SETSIZE */
 #define FD_SETSIZE 256
 
-#define SKYUTILS_VERSION "3.77"
+#define SKYUTILS_VERSION "3.78"
 #define SKYUTILS_AUTHOR "Christophe Calméjane"
 
 #if defined(__MACH__) || defined(_AIX)
@@ -768,7 +768,8 @@ SKYUTILS_API extern SU_PList SW_Cookies; /* SU_PCookie */
 #define SU_THREAD_PRIORITY_ABOVE_NORMAL THREAD_PRIORITY_ABOVE_NORMAL
 #define SU_THREAD_PRIORITY_BELOW_NORMAL THREAD_PRIORITY_BELOW_NORMAL
 #endif /* __unix__ */
-/* Create a new thread */
+
+/* Create a new thread - Do not detach the thread if you want to use SU_WaitForThread */
 SKYUTILS_API bool SU_CreateThread(SU_THREAD_HANDLE *Handle,SU_THREAD_ID *ThreadId,SU_THREAD_ROUTINE_TYPE(Entry),void *User,bool Detached); /* True on success */
 
 /* Set a thread's priority */
@@ -785,6 +786,9 @@ SKYUTILS_API void SU_SuspendThread(SU_THREAD_HANDLE Handle);
 
 /* Resume a suspended thread */
 SKYUTILS_API void SU_ResumeThread(SU_THREAD_HANDLE Handle);
+
+/* Waits for a thread to complete, returning its exit code. Thread must not have been created 'detached' */
+SKYUTILS_API void *SU_WaitForThread(SU_THREAD_HANDLE Handle);
 
 /* Create a new semaphore (InitialCount: Taken=0 NotTaken=1) - SemName must be unique (or NULL) */
 SKYUTILS_API bool SU_CreateSem(SU_SEM_HANDLE *Handle,int InitialCount,int MaximumCount,const char SemName[]); /* True on success */

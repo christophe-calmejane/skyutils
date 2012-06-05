@@ -104,6 +104,19 @@ SKYUTILS_API void SU_ResumeThread(SU_THREAD_HANDLE Handle)
 #endif /* _WIN32 */
 }
 
+SKYUTILS_API void *SU_WaitForThread(SU_THREAD_HANDLE Handle)
+{
+#ifdef _WIN32
+  DWORD retval;
+  WaitForSingleObject(Handle,INFINITE);
+  GetExitCodeThread(Handle,&retval);
+#else /* !_WIN32 */
+  void *retval;
+  pthread_join(Handle,&retval);
+#endif /* _WIN32 */
+  return (void *)retval;
+}
+
 SKYUTILS_API bool SU_CreateThreadKey(SU_THREAD_KEY_HANDLE *Handle,SU_THREAD_ONCE_HANDLE *Once,void (*destroyts)(void *))
 {
 #ifdef _WIN32
