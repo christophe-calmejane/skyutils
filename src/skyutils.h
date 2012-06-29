@@ -28,7 +28,7 @@
 #endif /* FD_SETSIZE */
 #define FD_SETSIZE 256
 
-#define SKYUTILS_VERSION "3.78"
+#define SKYUTILS_VERSION "3.79"
 #define SKYUTILS_AUTHOR "Christophe Calméjane"
 
 #if defined(__MACH__) || defined(_AIX)
@@ -709,7 +709,7 @@ SKYUTILS_API extern SU_PList SW_Cookies; /* SU_PCookie */
 #define SU_THREAD_ROUTINE_TYPE(x) void *(*x)(void *)
 #define SU_THREAD_ROUTINE(x,y) void * x(void *y)
 #define SU_END_THREAD(x) pthread_exit((void *)(x))
-#define SU_THREAD_RETURN(x) return;
+#define SU_THREAD_RETURN(x) return (void *)(x);
 #define SU_PROCESS_SELF (SU_u32)getpid()
 #define SU_THREAD_SELF (SU_THREAD_ID)pthread_self()
 #define SU_THREAD_KEY_HANDLE pthread_key_t
@@ -743,7 +743,7 @@ SKYUTILS_API extern SU_PList SW_Cookies; /* SU_PCookie */
 #define SU_THREAD_ROUTINE_TYPE(x) unsigned (__stdcall *x)(void *)
 #define SU_THREAD_ROUTINE(x,y) unsigned __stdcall x(void *y)
 #define SU_END_THREAD(x) _endthreadex((unsigned)(x))
-#define SU_THREAD_RETURN(x) return (x);
+#define SU_THREAD_RETURN(x) return (unsigned)(x);
 #define SU_PROCESS_SELF (SU_u32)GetCurrentProcessId()
 #define SU_THREAD_SELF (SU_THREAD_ID)GetCurrentThreadId()
 #define SU_THREAD_KEY_HANDLE DWORD
