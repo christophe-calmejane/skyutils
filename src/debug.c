@@ -65,6 +65,20 @@ SU_DBG_TOutputName SU_DBG_OutputNames[]={{SU_DBG_OUTPUT_PRINTF,"printf"},{SU_DBG
   /* Socket output */
   SU_SOCKET SU_DBG_OUT_SOCKET_Socks[SU_DBG_MAX_SOCKETS] = {SU_NOT_A_SOCKET,SU_NOT_A_SOCKET,SU_NOT_A_SOCKET,SU_NOT_A_SOCKET};
 
+static void SU_DBG_CONSOLE_SearchConsole()
+{
+	HWND wnd = FindWindow("#32770",SU_DBG_OUT_CONSOLE_Name);
+	if(wnd != NULL)
+	{
+		char className[50];
+		if((GetClassName(wnd,className,sizeof(className)) != 0)
+			&& (SU_strcasecmp(className,"#32770") == true))
+		{
+			SU_DBG_OUT_CONSOLE_Hwnd = wnd;
+		}
+	}
+}
+
 void SU_DBG_Init(void)
 {
   char *tmp,*env;
@@ -246,7 +260,7 @@ SKYUTILS_API void SU_DBG_OUT_CONSOLE_SetOptions(const char WindowName[])
   else
     SU_DBG_OUT_CONSOLE_Name = SU_strdup((char *)WindowName);
   SU_DBG_OUT_CONSOLE_Msg = RegisterWindowMessage(SU_DBG_OUT_CONSOLE_Name);
-  SU_DBG_OUT_CONSOLE_Hwnd = FindWindow(NULL,SU_DBG_OUT_CONSOLE_Name);
+	SU_DBG_CONSOLE_SearchConsole();
   if(SU_DBG_OUT_CONSOLE_Hwnd == NULL)
   {
     printf("SU_DBG_OUT_CONSOLE_SetOptions : Cannot find console window with name : %s\n",SU_DBG_OUT_CONSOLE_Name);
@@ -409,7 +423,7 @@ SKYUTILS_API void SU_DBG_PrintDebug(const SU_u64 Type,char *Txt, ...)
       {
         if(__RetryCount >= 50)
         {
-          SU_DBG_OUT_CONSOLE_Hwnd = FindWindow(NULL,SU_DBG_OUT_CONSOLE_Name);
+					SU_DBG_CONSOLE_SearchConsole();
           __RetryCount = 0;
         }
         else
@@ -432,11 +446,11 @@ SKYUTILS_API void SU_DBG_PrintDebug(const SU_u64 Type,char *Txt, ...)
           int err = SU_errno;
           printf("SU_DBG_PrintDebug : Failed to create GlobalAddAtom (%d:%s)",err,SU_strerror(err));
 #ifdef _WIN32
-          {
+          /*{
             char buf[512];
             SU_snprintf(buf,sizeof(buf),"SU_DBG_PrintDebug : Failed to create GlobalAddAtom (%d:%s)",err,SU_strerror(err));
             MessageBox(NULL,buf,"SU_DBG Error",MB_OK);
-          }
+          }*/
 #endif /* _WIN32 */
         }
       }
@@ -566,65 +580,4 @@ SKYUTILS_API void SU_DBG_PrintDebug(const SU_u64 Type,char *Txt, ...)
     }
 #endif /* _WIN32 */
   }
-}
-
-
-
-void OXDO_Printf_Console(const SU_u64 Type, char *Txt, ...)
-{
-
-#ifdef _WIN32
-	va_list argptr;
-		char Str[8192];
-
-		//return;
-    va_start(argptr,Txt);
-#ifdef _WIN32
-    _vsnprintf(Str,sizeof(Str),Txt,argptr);
-#else /* !_WIN32 */
-    vsnprintf(Str,sizeof(Str),Txt,argptr);
-#endif /* _WIN32 */
-    va_end(argptr);
-	if(SU_DBG_Output & SU_DBG_OUTPUT_CONSOLE)
-    {
-      static int __RetryCount = 0;
-      if(SU_DBG_OUT_CONSOLE_Hwnd == 0)
-      {
-        if(__RetryCount >= 50)
-        {
-#ifdef _WIN32
-          SU_DBG_OUT_CONSOLE_Hwnd = FindWindow(NULL,SU_DBG_OUT_CONSOLE_Name);
-#endif
-          __RetryCount = 0;
-        }
-        else
-          __RetryCount++;
-      }
-      if(SU_DBG_OUT_CONSOLE_Hwnd != 0)
-      {
-        ATOM atom;
-        char Str2[255]; /* 255 is the max size of strings in GlobalAddAtom */
-
-        SU_snprintf(Str2,sizeof(Str2),"%s%",Str);
-        atom = GlobalAddAtom(Str2);
-        if(atom != 0)
-        {
-          /*PostMessage(SU_DBG_OUT_CONSOLE_Hwnd,SU_DBG_OUT_CONSOLE_Msg,atom,(LPARAM)Type);*/
-          SendMessage(SU_DBG_OUT_CONSOLE_Hwnd,SU_DBG_OUT_CONSOLE_Msg,atom,(LPARAM)Type);
-        }
-        else
-        {
-          int err = SU_errno;
-          printf("SU_DBG_PrintDebug : Failed to create GlobalAddAtom (%d:%s)",err,SU_strerror(err));
-#ifdef _WIN32
-          {
-            char buf[512];
-            SU_snprintf(buf,sizeof(buf),"SU_DBG_PrintDebug : Failed to create GlobalAddAtom (%d:%s)",err,SU_strerror(err));
-            MessageBox(NULL,buf,"SU_DBG Error",MB_OK);
-          }
-#endif /* _WIN32 */
-        }
-      }
-    }
-#endif
 }
