@@ -65,6 +65,7 @@ SU_DBG_TOutputName SU_DBG_OutputNames[]={{SU_DBG_OUTPUT_PRINTF,"printf"},{SU_DBG
   /* Socket output */
   SU_SOCKET SU_DBG_OUT_SOCKET_Socks[SU_DBG_MAX_SOCKETS] = {SU_NOT_A_SOCKET,SU_NOT_A_SOCKET,SU_NOT_A_SOCKET,SU_NOT_A_SOCKET};
 
+#ifdef _WIN32
 static void SU_DBG_CONSOLE_SearchConsole()
 {
 	HWND wnd = FindWindow("#32770",SU_DBG_OUT_CONSOLE_Name);
@@ -78,6 +79,7 @@ static void SU_DBG_CONSOLE_SearchConsole()
 		}
 	}
 }
+#endif /* _WIN32 */
 
 void SU_DBG_Init(void)
 {
