@@ -283,69 +283,74 @@ SKYUTILS_API void SU_SendTCPBufferToMultiSocket(SU_PMultiSocket socks,char *buf,
 /*------------------------------------------------------------*/
 SKYUTILS_API SU_PServerInfo SU_CreateServer(int port,int type,bool ReUseAdrs)
 {
-  SU_PServerInfo SI;
-  SU_SOCKLEN_T len;
-
-  SI = (SU_PServerInfo) malloc(sizeof(SU_TServerInfo));
-  memset(SI,0,sizeof(SU_TServerInfo));
-  if( type == SOCK_STREAM )
-    SI->sock = socket(AF_INET,type,getprotobyname("tcp")->p_proto);
-  else if( type == SOCK_DGRAM )
-    SI->sock = socket(AF_INET,type,getprotobyname("udp")->p_proto);
-  else
-    return NULL;
-  if(SI->sock == SU_INVALID_SOCKET)
-  {
-    free(SI);
-    return NULL;
-  }
-  memset(&(SI->SAddr),0,sizeof(struct sockaddr_in));
+	SU_PServerInfo SI;
+	SU_SOCKLEN_T len;
+	
+	SI = (SU_PServerInfo) malloc(sizeof(SU_TServerInfo));
+	if(SI == NULL)
+		return NULL;
+	memset(SI,0,sizeof(SU_TServerInfo));
+	if( type == SOCK_STREAM )
+		SI->sock = socket(AF_INET,type,getprotobyname("tcp")->p_proto);
+	else if( type == SOCK_DGRAM )
+		SI->sock = socket(AF_INET,type,getprotobyname("udp")->p_proto);
+	else
+	{
+		free(SI);
+		return NULL;
+	}
+	if(SI->sock == SU_INVALID_SOCKET)
+	{
+		free(SI);
+		return NULL;
+	}
+	memset(&(SI->SAddr),0,sizeof(struct sockaddr_in));
 #ifdef __unix__
-  if(ReUseAdrs)
-  {
-    len = sizeof(struct sockaddr_in);
-    if(getsockname(SI->sock,(struct sockaddr *)&(SI->SAddr),&len) == -1)
-    {
-      int err = SU_errno; /* We need to backup last error, because it will be overriden by the following SU_CLOSE_SOCKET call */
-      SU_CLOSE_SOCKET(SI->sock);
-      free(SI);
-      SU_seterrno(err); /* Restore last error */
-      return NULL;
-    }
-    len = 1;
-    setsockopt(SI->sock,SOL_SOCKET,SO_REUSEADDR,(char *)&len,sizeof(len));
-  }
+	if(ReUseAdrs)
+	{
+		len = sizeof(struct sockaddr_in);
+		if(getsockname(SI->sock,(struct sockaddr *)&(SI->SAddr),&len) == -1)
+		{
+			int err = SU_errno; /* We need to backup last error, because it will be overriden by the following SU_CLOSE_SOCKET call */
+			SU_CLOSE_SOCKET(SI->sock);
+			free(SI);
+			SU_seterrno(err); /* Restore last error */
+			return NULL;
+		}
+		len = 1;
+		setsockopt(SI->sock,SOL_SOCKET,SO_REUSEADDR,(char *)&len,sizeof(len));
+	}
 #endif /* __unix__ */
-  SI->SAddr.sin_family = AF_INET;
-  SI->SAddr.sin_port = htons(port);
-  SI->SAddr.sin_addr.s_addr = 0;
-  if(bind(SI->sock,(struct sockaddr *)&(SI->SAddr), sizeof(SI->SAddr)) == -1)
-  {
-    int err = SU_errno; /* We need to backup last error, because it will be overriden by the following SU_CLOSE_SOCKET call */
-    SU_CLOSE_SOCKET(SI->sock);
-    free(SI);
-    SU_seterrno(err); /* Restore last error */
-    return NULL;
-  }
-
+	SI->SAddr.sin_family = AF_INET;
+	SI->SAddr.sin_port = htons(port);
+	SI->SAddr.sin_addr.s_addr = 0;
+	if(bind(SI->sock,(struct sockaddr *)&(SI->SAddr), sizeof(SI->SAddr)) == -1)
+	{
+		int err = SU_errno; /* We need to backup last error, because it will be overriden by the following SU_CLOSE_SOCKET call */
+		SU_CLOSE_SOCKET(SI->sock);
+		free(SI);
+		SU_seterrno(err); /* Restore last error */
+		return NULL;
+	}
+	
 #ifdef _WIN32
-  if(ReUseAdrs)
-  {
-    len = sizeof(struct sockaddr_in);
-    if(getsockname(SI->sock,(struct sockaddr *)&(SI->SAddr),&len) == -1)
-    {
-      int err = SU_errno; /* We need to backup last error, because it will be overriden by the following SU_CLOSE_SOCKET call */
-      SU_CLOSE_SOCKET(SI->sock);
-      free(SI);
-      SU_seterrno(err); /* Restore last error */
-      return NULL;
-    }
-    len = 1;
-    setsockopt(SI->sock,SOL_SOCKET,SO_REUSEADDR,(char *)&len,sizeof(len));
-  }
+	if(ReUseAdrs)
+	{
+		len = sizeof(struct sockaddr_in);
+		if(getsockname(SI->sock,(struct sockaddr *)&(SI->SAddr),&len) == -1)
+		{
+			int err = SU_errno; /* We need to backup last error, because it will be overriden by the following SU_CLOSE_SOCKET call */
+			SU_CLOSE_SOCKET(SI->sock);
+			free(SI);
+			SU_seterrno(err); /* Restore last error */
+			return NULL;
+		}
+		len = 1;
+		setsockopt(SI->sock,SOL_SOCKET,SO_REUSEADDR,(char *)&len,sizeof(len));
+	}
 #endif /* _WIN32 */
-
-  return SI;
+	
+	return SI;
 }
 
 SKYUTILS_API int SU_ServerListen(SU_PServerInfo SI)
@@ -442,57 +447,63 @@ SKYUTILS_API void SU_FreeSI(SU_PServerInfo SI)
 /*------------------------------------------------------------*/
 SKYUTILS_API SU_PClientSocket SU_ClientConnect(char *adrs,char *port,int type)
 {
-  struct servent *SE;
-  struct sockaddr_in sin;
-  struct hostent *HE;
-  SU_PClientSocket CS;
-
-  CS = (SU_PClientSocket) malloc(sizeof(SU_TClientSocket));
-  memset(CS,0,sizeof(SU_TClientSocket));
-  if(type == SOCK_STREAM)
-    CS->sock = socket(AF_INET,SOCK_STREAM,getprotobyname("tcp")->p_proto);
-  else if(type == SOCK_DGRAM)
-    CS->sock = socket(AF_INET,SOCK_DGRAM,getprotobyname("udp")->p_proto);
-  else
-    return NULL;
-  if(CS->sock == SU_INVALID_SOCKET)
-  {
-    free(CS);
-    return NULL;
-  }
-  sin.sin_family = AF_INET;
-  if(type == SOCK_STREAM)
-    SE = getservbyname(port,"tcp");
-  else if(type == SOCK_DGRAM)
-    SE = getservbyname(port,"udp");
-  else
-    return NULL;
-  if(SE == NULL)
-    sin.sin_port = htons(atoi(port));
-  else
-    sin.sin_port = SE->s_port;
-  sin.sin_addr.s_addr = inet_addr(adrs);
-  if(sin.sin_addr.s_addr == INADDR_NONE)
-  {
-    HE = gethostbyname(adrs);
-    if(HE == NULL)
-    {
-      /*printf("SkyUtils_ClientConnect Warning: Unknown Host: %s\n",adrs);*/
-      SU_seterrno(ENXIO);
-      return NULL;
-    }
-    sin.sin_addr = *(struct in_addr *)(HE->h_addr_list[0]);
-  }
-  if(connect(CS->sock,(struct sockaddr *)(&sin),sizeof(sin)) == -1)
-  {
-    int err = SU_errno; /* We need to backup last error, because it will be overriden by the following SU_CLOSE_SOCKET call */
-    SU_CLOSE_SOCKET(CS->sock);
-    free(CS);
-    SU_seterrno(err); /* Restore last error */
-    return NULL;
-  }
-  memcpy(&CS->SAddr,&sin,sizeof(CS->SAddr));
-  return CS;
+	struct servent *SE;
+	struct sockaddr_in sin;
+	struct hostent *HE;
+	SU_PClientSocket CS;
+	
+	CS = (SU_PClientSocket) malloc(sizeof(SU_TClientSocket));
+	if(CS == NULL)
+		return NULL;
+	memset(CS,0,sizeof(SU_TClientSocket));
+	if(type == SOCK_STREAM)
+		CS->sock = socket(AF_INET,SOCK_STREAM,getprotobyname("tcp")->p_proto);
+	else if(type == SOCK_DGRAM)
+		CS->sock = socket(AF_INET,SOCK_DGRAM,getprotobyname("udp")->p_proto);
+	else
+	{
+		free(CS);
+		return NULL;
+	}
+	if(CS->sock == SU_INVALID_SOCKET)
+	{
+		free(CS);
+		return NULL;
+	}
+	sin.sin_family = AF_INET;
+	if(type == SOCK_STREAM)
+		SE = getservbyname(port,"tcp");
+	else if(type == SOCK_DGRAM)
+		SE = getservbyname(port,"udp");
+	else
+		return NULL;
+	if(SE == NULL)
+		sin.sin_port = htons(atoi(port));
+	else
+		sin.sin_port = SE->s_port;
+	sin.sin_addr.s_addr = inet_addr(adrs);
+	if(sin.sin_addr.s_addr == INADDR_NONE)
+	{
+		HE = gethostbyname(adrs);
+		if(HE == NULL)
+		{
+			/*printf("SkyUtils_ClientConnect Warning: Unknown Host: %s\n",adrs);*/
+			SU_seterrno(ENXIO);
+			free(CS);
+			return NULL;
+		}
+		sin.sin_addr = *(struct in_addr *)(HE->h_addr_list[0]);
+	}
+	if(connect(CS->sock,(struct sockaddr *)(&sin),sizeof(sin)) == -1)
+	{
+		int err = SU_errno; /* We need to backup last error, because it will be overriden by the following SU_CLOSE_SOCKET call */
+		SU_CLOSE_SOCKET(CS->sock);
+		free(CS);
+		SU_seterrno(err); /* Restore last error */
+		return NULL;
+	}
+	memcpy(&CS->SAddr,&sin,sizeof(CS->SAddr));
+	return CS;
 }
 
 SKYUTILS_API int SU_ClientSend(SU_PClientSocket CS,char *msg)
