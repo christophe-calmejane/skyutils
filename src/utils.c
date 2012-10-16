@@ -985,7 +985,7 @@ SKYUTILS_API SU_FILE_HANDLE SU_CreateFile(const char *FilePath,SU_u32 CreateFlag
 
 SKYUTILS_API SU_FILE_HANDLE SU_OpenFile(const char *FilePath,SU_u32 Access,bool CreateIfNotPresent,bool NoCaching,bool Append)
 {
-  FILE *fp;
+  FILE *fp = NULL;
 
   switch(Access)
   {

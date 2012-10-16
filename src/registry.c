@@ -914,7 +914,7 @@ SKYUTILS_API bool SU_RB_EnumIntValue(HKEY Key,int Idx,char *Name,int name_len,in
   if(Val->Type != SU_RB_TYPE_INT)
     return false;
   SU_strcpy(Name,Val->Name,name_len);
-  *Value = (int)Val->Value;
+  *Value = (int)(size_t)(Val->Value);
   return true;
 }
 
@@ -958,7 +958,7 @@ bool _SU_RB_ReadValue(SU_RB_PValue Value)
         SU_RB_LastError = SU_RB_ERR_PREMATURE_EOF;
         return false;
       }
-      Value->Value = (void *)nb;
+      Value->Value = (void *)(size_t)nb;
       break;
     case SU_RB_TYPE_STR :
       if(fread(&nb,1,sizeof(nb),_SU_RB_RegFile) != sizeof(nb))
@@ -1117,7 +1117,7 @@ bool _SU_RB_WriteValue(SU_RB_PValue Value)
   switch(Value->Type)
   {
     case SU_RB_TYPE_INT :
-      nb = (int)(Value->Value);
+      nb = (int)(size_t)(Value->Value);
       if(fwrite(&nb,1,sizeof(nb),_SU_RB_RegFile) != sizeof(nb))
       {
         SU_RB_LastError = SU_RB_ERR_WRITE_ERROR;
@@ -1280,7 +1280,7 @@ SU_RB_PValue _SU_RB_ReadIntValue(SU_RB_PNode Node,const char Key[],int *val)
         return NULL;
       }
       if(val != NULL)
-        *val = (int)Val->Value;
+        *val = (int)(size_t)(Val->Value);
       return Val;
     }
     Ptr = Ptr->Next;
@@ -1329,7 +1329,7 @@ bool _SU_RB_SetIntValue(SU_RB_PNode Node,const char Key[],const int Value)
     Val->Value = NULL;
   }
   Val->Type = SU_RB_TYPE_INT;
-  Val->Value = (void *)Value;
+  Val->Value = (void *)(size_t)Value;
   return true;
 }
 

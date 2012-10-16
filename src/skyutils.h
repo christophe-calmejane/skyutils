@@ -28,7 +28,7 @@
 #endif /* FD_SETSIZE */
 #define FD_SETSIZE 256
 
-#define SKYUTILS_VERSION "3.90"
+#define SKYUTILS_VERSION "3.91"
 #define SKYUTILS_AUTHOR "Christophe Calméjane"
 
 #if defined(__MACH__) || defined(_AIX)
@@ -51,10 +51,10 @@ typedef unsigned int bool;
 #define SU_BOOL unsigned int
 
 #ifndef MAX
-#define MAX(a,b) ((a) > (b))?(a):(b)
+#define MAX(a,b) (((a) > (b))?(a):(b))
 #endif /* !MAX */
 #ifndef MIN
-#define MIN(a,b) ((a) < (b))?(a):(b)
+#define MIN(a,b) (((a) < (b))?(a):(b))
 #endif /* !MIN */
 
 #ifndef SU_NO_INCLUDES
@@ -81,11 +81,11 @@ typedef unsigned int bool;
 #include <netinet/tcp.h>
 #define SU_SOCKET int
 #define SU_INVALID_SOCKET (-1)
-#ifdef __APPLE__
+//#ifdef __APPLE__
 #define SU_SOCKLEN_T socklen_t
-#else /* !__APPLE__ */
-#define SU_SOCKLEN_T int
-#endif /* __APPLE */
+//#else /* !__APPLE__ */
+//#define SU_SOCKLEN_T int
+//#endif /* __APPLE */
 #define SKYUTILS_API
 
 #else /* _WIN32 */
@@ -325,7 +325,7 @@ SKYUTILS_API void SU_SockUninit(void); /* Uninits Socks (MUST BE CALL BEFORE EXI
 #define SU_ECONNABORTED ECONNABORTED
 #define SU_EAGAIN EAGAIN
 #define SU_ENOBUFS ENOBUFS
-#define SU_seterrno(x) errno = x
+#define SU_seterrno(x) (errno = x)
 #define SU_errno errno
 #define SU_ioctl ioctl
 #endif /* _WIN32 */
@@ -365,7 +365,7 @@ SKYUTILS_API int SU_atoi(const char *value); /* Like atoi() but if value starts 
 #ifdef __BORLANDC__
 #define strcasecmp stricmp
 #define strncasecmp strnicmp
-#define SU_strdup(x) ((x)==NULL)?NULL:strdup(x)
+#define SU_strdup(x) (((x)==NULL)?NULL:strdup(x))
 #else /* !__BORLANDC__ */
 #define strcasecmp _stricmp
 #define strncasecmp _strnicmp
@@ -374,10 +374,10 @@ SKYUTILS_API int SU_atoi(const char *value); /* Like atoi() but if value starts 
 #define getpid _getpid
 #define unlink _unlink
 #define strdup _strdup
-#define SU_strdup(x) ((x)==NULL)?NULL:_strdup(x)
+#define SU_strdup(x) (((x)==NULL)?NULL:_strdup(x))
 #endif /* __BORLANDC__ */
 #else /* !_WIN32 */
-#define SU_strdup(x) ((x)==NULL)?NULL:strdup(x)
+#define SU_strdup(x) (((x)==NULL)?NULL:strdup(x))
 #endif /* _WIN32 */
 
 
