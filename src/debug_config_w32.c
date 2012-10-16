@@ -24,12 +24,18 @@
 #include "debug.h"
 #include "Windows\\Skyutils\\su_resource.h"
 
+#ifdef _WIN32
+#pragma warning( disable: 4057 4100 4311)
+#endif /* _WIN32 */
+
 #ifndef SU_TRACE_INTERNAL
+#ifdef SU_MALLOC_TRACE
 #undef malloc
 #undef calloc
 #undef realloc
 #undef strdup
 #undef free
+#endif /* SU_MALLOC_TRACE */
 #endif /* !SU_TRACE_INTERNAL */
 
 static bool _su_dbg_options_changed = false;

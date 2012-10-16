@@ -26,11 +26,13 @@
 #include "skyutils.h"
 
 #ifndef SU_TRACE_INTERNAL
+#ifdef SU_MALLOC_TRACE
 #undef malloc
 #undef calloc
 #undef realloc
 #undef strdup
 #undef free
+#endif /* SU_MALLOC_TRACE */
 #endif /* !SU_TRACE_INTERNAL */
 
 SKYUTILS_API SU_PList SU_AddElementTail(SU_PList List,void *Elem)

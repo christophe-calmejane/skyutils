@@ -31,12 +31,18 @@
 #include <time.h>
 #endif
 
+#ifdef _WIN32
+#pragma warning( disable: 4127)
+#endif /* _WIN32 */
+
 #ifndef SU_TRACE_INTERNAL
+#ifdef SU_MALLOC_TRACE
 #undef malloc
 #undef calloc
 #undef realloc
 #undef strdup
 #undef free
+#endif /* SU_MALLOC_TRACE */
 #endif /* !SU_TRACE_INTERNAL */
 
 /* *** Global Debug Variables *** */
@@ -258,7 +264,7 @@ SKYUTILS_API void SU_DBG_OUT_CONSOLE_SetOptions(const char WindowName[])
   if(SU_DBG_OUT_CONSOLE_Name != NULL)
     free(SU_DBG_OUT_CONSOLE_Name);
   if(WindowName[0] == 0)
-    SU_DBG_OUT_CONSOLE_Name = SU_strdup(SU_DBG_CONSOLE_DEFAULT_WINDOW_NAME);
+    SU_DBG_OUT_CONSOLE_Name = SU_strdup((char *)SU_DBG_CONSOLE_DEFAULT_WINDOW_NAME);
   else
     SU_DBG_OUT_CONSOLE_Name = SU_strdup((char *)WindowName);
   SU_DBG_OUT_CONSOLE_Msg = RegisterWindowMessage(SU_DBG_OUT_CONSOLE_Name);
@@ -470,7 +476,7 @@ SKYUTILS_API void SU_DBG_PrintDebug(const SU_u64 Type,char *Txt, ...)
       int res,sent = 0;
       fd_set wfds;
       struct timeval tv;
-      SU_u32 len;
+      size_t len;
       char Str2[8500];
 
       SU_snprintf(Str2,sizeof(Str2),"%s%s%s%s",ProcessStr,ThreadStr,TimeStr,Str);
@@ -484,7 +490,7 @@ SKYUTILS_API void SU_DBG_PrintDebug(const SU_u64 Type,char *Txt, ...)
           FD_SET(SU_DBG_OUT_SOCKET_Socks[i],&wfds);
           tv.tv_sec = 10;
           tv.tv_usec = 0;
-          res = select(SU_DBG_OUT_SOCKET_Socks[i]+1,NULL,&wfds,NULL,&tv);
+          res = select((int)(SU_DBG_OUT_SOCKET_Socks[i]+1),NULL,&wfds,NULL,&tv);
           if(!res)
           {
             printf("SU_DBG_PrintDebug : Timed out while sending debug message size, closing link\n");
@@ -514,7 +520,7 @@ SKYUTILS_API void SU_DBG_PrintDebug(const SU_u64 Type,char *Txt, ...)
           FD_SET(SU_DBG_OUT_SOCKET_Socks[i],&wfds);
           tv.tv_sec = 10;
           tv.tv_usec = 0;
-          res = select(SU_DBG_OUT_SOCKET_Socks[i]+1,NULL,&wfds,NULL,&tv);
+          res = select((int)(SU_DBG_OUT_SOCKET_Socks[i]+1),NULL,&wfds,NULL,&tv);
           if(!res)
           {
             printf("SU_DBG_PrintDebug : Timed out while sending debug type size, closing link\n");
@@ -544,7 +550,7 @@ SKYUTILS_API void SU_DBG_PrintDebug(const SU_u64 Type,char *Txt, ...)
           FD_SET(SU_DBG_OUT_SOCKET_Socks[i],&wfds);
           tv.tv_sec = 10;
           tv.tv_usec = 0;
-          res = select(SU_DBG_OUT_SOCKET_Socks[i]+1,NULL,&wfds,NULL,&tv);
+          res = select((int)(SU_DBG_OUT_SOCKET_Socks[i]+1),NULL,&wfds,NULL,&tv);
           if(!res)
           {
             printf("SU_DBG_PrintDebug : Timed out while sending debug message, closing link\n");

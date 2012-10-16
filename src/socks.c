@@ -22,12 +22,18 @@
 
 #include "skyutils.h"
 
+#ifdef _WIN32
+#pragma warning( disable: 4127)
+#endif /* _WIN32 */
+
 #ifndef SU_TRACE_INTERNAL
+#ifdef SU_MALLOC_TRACE
 #undef malloc
 #undef calloc
 #undef realloc
 #undef strdup
 #undef free
+#endif /* SU_MALLOC_TRACE */
 #endif /* !SU_TRACE_INTERNAL */
 
 SKYUTILS_API int SU_GetPortByName(char *port,char *proto)
@@ -160,7 +166,7 @@ SKYUTILS_API int SU_ReadTCPBuffer(SU_SOCKET sock,char *buf,int size,struct timev
   {
     FD_ZERO(&rfds);
     FD_SET(sock,&rfds);
-    retval = select(sock+1,&rfds,NULL,NULL,TimeOut);
+    retval = select((int)(sock+1),&rfds,NULL,NULL,TimeOut);
     if(retval == 0) /* Time out */
     {
       ret = -2;
@@ -223,10 +229,10 @@ SKYUTILS_API int SU_SelectMultiSocketForRead(SU_PMultiSocket socks,struct timeva
       if((socks->sons[i] != NULL) && (socks->sons[i]->sock != SU_NOT_A_SOCKET))
       {
         FD_SET(socks->sons[i]->sock,&rfds);
-        n = MAX(n,socks->sons[i]->sock);
+        n = (unsigned int)(MAX(n,socks->sons[i]->sock));
       }
     }
-    ret = select(n+1,&rfds,NULL,NULL,TimeOut);
+    ret = select((int)(n+1),&rfds,NULL,NULL,TimeOut);
     if(ret == 0) /* Time out */
     {
       return -2;
@@ -322,7 +328,7 @@ SKYUTILS_API SU_PServerInfo SU_CreateServer(int port,int type,bool ReUseAdrs)
 	}
 #endif /* __unix__ */
 	SI->SAddr.sin_family = AF_INET;
-	SI->SAddr.sin_port = htons(port);
+	SI->SAddr.sin_port = htons((unsigned short)port);
 	SI->SAddr.sin_addr.s_addr = 0;
 	if(bind(SI->sock,(struct sockaddr *)&(SI->SAddr), sizeof(SI->SAddr)) == -1)
 	{
@@ -478,7 +484,7 @@ SKYUTILS_API SU_PClientSocket SU_ClientConnect(char *adrs,char *port,int type)
 	else
 		return NULL;
 	if(SE == NULL)
-		sin.sin_port = htons(atoi(port));
+		sin.sin_port = htons((unsigned short)atoi(port));
 	else
 		sin.sin_port = SE->s_port;
 	sin.sin_addr.s_addr = inet_addr(adrs);
@@ -510,7 +516,7 @@ SKYUTILS_API int SU_ClientSend(SU_PClientSocket CS,char *msg)
 {
   if(CS == NULL)
     return SOCKET_ERROR;
-  return send(CS->sock,msg,strlen(msg),SU_MSG_NOSIGNAL);
+  return send(CS->sock,msg,(int)strlen(msg),SU_MSG_NOSIGNAL);
 }
 
 SKYUTILS_API int SU_ClientSendBuf(SU_PClientSocket CS,char *buf,int len)
@@ -556,7 +562,7 @@ SKYUTILS_API int SU_UDPSendBroadcast(SU_PServerInfo SI,char *Text,int len,char *
   }
 #endif /* DEBUG */
   sin.sin_family = AF_INET;
-  sin.sin_port = htons(atoi(port));
+  sin.sin_port = htons((unsigned short)atoi(port));
   sin.sin_addr.s_addr = INADDR_BROADCAST;
 
   i = 0;
@@ -592,7 +598,7 @@ SKYUTILS_API int SU_UDPSendToAddr(SU_PServerInfo SI,char *Text,int len,char *Add
     sin.sin_addr = *(struct in_addr *)(PHE->h_addr_list[0]);
   }
   sin.sin_family = AF_INET;
-  sin.sin_port = htons(atoi(port));
+  sin.sin_port = htons((unsigned short)atoi(port));
 
   i = 0;
   while(len > 0)
@@ -728,10 +734,10 @@ SKYUTILS_API bool SU_SplitIPv4(const char *IPin,unsigned char IPout[4])
 	CHECK_INVALID_VALUE(f3);
 	CHECK_INVALID_VALUE(f4);
 	
-	IPout[0] = f1;
-	IPout[1] = f2;
-	IPout[2] = f3;
-	IPout[3] = f4;
+	IPout[0] = (unsigned char)f1;
+	IPout[1] = (unsigned char)f2;
+	IPout[2] = (unsigned char)f3;
+	IPout[3] = (unsigned char)f4;
 	
 #undef CHECK_INVALID_VALUE
   return true;
@@ -752,12 +758,12 @@ SKYUTILS_API bool SU_SplitMAC(const char *MACin,unsigned char MACout[6])
   CHECK_INVALID_VALUE(f5);
   CHECK_INVALID_VALUE(f6);
 
-  MACout[0] = f1;
-  MACout[1] = f2;
-  MACout[2] = f3;
-  MACout[3] = f4;
-  MACout[4] = f5;
-  MACout[5] = f6;
+  MACout[0] = (unsigned char)f1;
+  MACout[1] = (unsigned char)f2;
+  MACout[2] = (unsigned char)f3;
+  MACout[3] = (unsigned char)f4;
+  MACout[4] = (unsigned char)f5;
+  MACout[5] = (unsigned char)f6;
 
 #undef CHECK_INVALID_VALUE
   return true;

@@ -22,12 +22,18 @@
 
 #include "skyutils.h"
 
+#ifdef _WIN32
+#pragma warning( disable: 4100)
+#endif /* _WIN32 */
+
 #ifndef SU_TRACE_INTERNAL
+#ifdef SU_MALLOC_TRACE
 #undef malloc
 #undef calloc
 #undef realloc
 #undef strdup
 #undef free
+#endif /* SU_MALLOC_TRACE */
 #endif /* !SU_TRACE_INTERNAL */
 
 SKYUTILS_API bool SU_CreateThread(SU_THREAD_HANDLE *Handle,SU_THREAD_ID *ThreadId,SU_THREAD_ROUTINE_TYPE(Entry),void *User,bool Detached)
@@ -106,15 +112,14 @@ SKYUTILS_API void SU_ResumeThread(SU_THREAD_HANDLE Handle)
 
 SKYUTILS_API void *SU_WaitForThread(SU_THREAD_HANDLE Handle)
 {
+  void *retval = 0;
 #ifdef _WIN32
-  DWORD retval;
   WaitForSingleObject(Handle,INFINITE);
-  GetExitCodeThread(Handle,&retval);
+  GetExitCodeThread(Handle,(LPDWORD)&retval);
 #else /* !_WIN32 */
-  void *retval;
   pthread_join(Handle,&retval);
 #endif /* _WIN32 */
-  return (void *)retval;
+  return retval;
 }
 
 SKYUTILS_API bool SU_CreateThreadKey(SU_THREAD_KEY_HANDLE *Handle,SU_THREAD_ONCE_HANDLE *Once,void (*destroyts)(void *))

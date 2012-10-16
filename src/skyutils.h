@@ -28,7 +28,7 @@
 #endif /* FD_SETSIZE */
 #define FD_SETSIZE 256
 
-#define SKYUTILS_VERSION "3.80"
+#define SKYUTILS_VERSION "3.90"
 #define SKYUTILS_AUTHOR "Christophe Calméjane"
 
 #if defined(__MACH__) || defined(_AIX)
@@ -512,11 +512,11 @@ SKYUTILS_API SU_u64 SU_GetSystemTime(void);
 #endif /* !SU_MALLOC_ALIGN_SIZE */
 typedef void (SU_PRINT_FUNC)(bool Fatal,char *Txt, ...);
 SKYUTILS_API void SU_SetPrintFunc(SU_PRINT_FUNC *Func);
-typedef void (SU_MEM_STATS_FUNC)(void *ptr,SU_u32 size,SU_u32 time,const char *file,SU_u32 line);
+typedef void (SU_MEM_STATS_FUNC)(void *ptr,size_t size,time_t time,const char *file,SU_u32 line);
 
-SKYUTILS_API void *SU_malloc(SU_u32 size); /* Allocates a bloc of memory aligned on SU_MALLOC_ALIGN_SIZE */
-SKYUTILS_API void *SU_calloc(SU_u32 nbelem,SU_u32 size); /* Allocates a bloc of memory aligned on SU_MALLOC_ALIGN_SIZE, and zeros it */
-SKYUTILS_API void *SU_realloc(void *memblock,SU_u32 size); /* Reallocates a bloc of memory aligned on SU_MALLOC_ALIGN_SIZE */
+SKYUTILS_API void *SU_malloc(size_t size); /* Allocates a bloc of memory aligned on SU_MALLOC_ALIGN_SIZE */
+SKYUTILS_API void *SU_calloc(size_t nbelem,size_t size); /* Allocates a bloc of memory aligned on SU_MALLOC_ALIGN_SIZE, and zeros it */
+SKYUTILS_API void *SU_realloc(void *memblock,size_t size); /* Reallocates a bloc of memory aligned on SU_MALLOC_ALIGN_SIZE */
 SKYUTILS_API char *SU_strdup_memory(const char *in); /* Dups a string using a bloc of memory aligned on SU_MALLOC_ALIGN_SIZE */
 SKYUTILS_API void SU_free(void *memblock);   /* Frees a bloc previously allocated using SU_malloc */
 #ifdef SU_MALLOC_TRACE
@@ -530,15 +530,15 @@ SKYUTILS_API void SU_free(void *memblock);   /* Frees a bloc previously allocate
 #define trace_print SU_alloc_trace_print(true)
 #define trace_print_count SU_alloc_trace_print(false)
 #endif /* SU_MALLOC_TRACE */
-SKYUTILS_API void *SU_malloc_trace(SU_u32 size,char *file,SU_u32 line);
-SKYUTILS_API void *SU_calloc_trace(SU_u32 nbelem,SU_u32 size,char *file,SU_u32 line);
-SKYUTILS_API void *SU_realloc_trace(void *memblock,SU_u32 size,char *file,SU_u32 line);
+SKYUTILS_API void *SU_malloc_trace(size_t size,char *file,SU_u32 line);
+SKYUTILS_API void *SU_calloc_trace(size_t nbelem,size_t size,char *file,SU_u32 line);
+SKYUTILS_API void *SU_realloc_trace(void *memblock,size_t size,char *file,SU_u32 line);
 SKYUTILS_API char *SU_strdup_trace(const char *in,char *file,SU_u32 line);
 SKYUTILS_API void SU_free_trace(void *memblock,char *file,SU_u32 line);
 SKYUTILS_API void SU_alloc_trace_print(bool detail); /* Print all allocated blocks (if detail is true), and total number of chunks */
 SKYUTILS_API void SU_check_memory(void); /* Check memory heap */
 SKYUTILS_API void SU_alloc_stats(SU_MEM_STATS_FUNC *Func); /* Call Func for each chunk of memory */
-SU_u32 SU_alloc_total_size(void); /* Returns the total size allocated */ /* Only available with SU_xx_trace functions */
+size_t SU_alloc_total_size(void); /* Returns the total size allocated */ /* Only available with SU_xx_trace functions */
 SKYUTILS_API void SU_SetMallocConfig(int check,int trace,int print); /* Sets the debug variables, as if "MALLOC_CHECK_", "SU_MALLOC_TRACE" and "SU_MALLOC_PRINT" were set */
 SKYUTILS_API void SU_GetMallocConfig(int *check,int *trace,int *print); /* Returns current internal config for debug */
 /* MALLOC_CHECK_ environment variable :
@@ -835,7 +835,7 @@ SKYUTILS_API bool SU_CriticalDelete(SU_CRITICAL *Crit);
 #define SU_DL_CLOSE(x) dlclose(x)
 #define SU_DL_SYM(x,y) dlsym(x,y)
 #else /* !__unix__ */
-#define SU_DL_HANDLE HINSTANCE
+#define SU_DL_HANDLE HMODULE
 #define SU_DL_OPEN(x) LoadLibrary(x)
 #define SU_DL_CLOSE(x) FreeLibrary(x)
 #define SU_DL_SYM(x,y) GetProcAddress(x,y)

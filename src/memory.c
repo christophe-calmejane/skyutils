@@ -24,6 +24,10 @@
 #include <time.h>
 #include <stdarg.h>
 
+#ifdef _WIN32
+#pragma warning( disable: 4100)
+#endif /* _WIN32 */
+
 #define SU_DEFAULT_MALLOC_CHECK 2
 #define SU_MALLOC_KEY 0x5c
 #define SU_MALLOC_KEY2 0xa7
@@ -38,15 +42,15 @@ bool SU_sem_init=false;
 int SU_env_check = SU_DEFAULT_MALLOC_CHECK;
 int SU_env_trace = 0;
 int SU_env_print = 0;
-SU_u32 SU_total_memory_allocated = 0;
+size_t SU_total_memory_allocated = 0;
 
 SU_PList SU_alloc_trace_list = NULL; /* SU_PAlloc */
 
 typedef struct
 {
   void *ptr;
-  SU_u32 size;
-  SU_u32 time;
+  size_t size;
+  time_t time;
   char file[512];
   SU_u32 line;
   bool freed;
@@ -100,44 +104,44 @@ void SU_SetPrintFunc(SU_PRINT_FUNC *Func)
 }
 
 /* MEMORY ALIGNEMENT FUNCTIONS */
-void *SU_malloc(SU_u32 size)
+void *SU_malloc(size_t size)
 {
   unsigned char pad;
   void *memblock,*retblock;
 
-  memblock = malloc((size_t)(size+SU_MALLOC_ALIGN_SIZE));
+  memblock = malloc((size_t)(size+2*SU_MALLOC_ALIGN_SIZE));
   if(memblock == NULL)
   {
     SU_PrintFunc(true,"SkyUtils_SU_malloc Warning : malloc returned NULL");
     return NULL;
   }
-  pad = (unsigned char)(((int)memblock)%SU_MALLOC_ALIGN_SIZE);
+  pad = (unsigned char)(((size_t)memblock)%SU_MALLOC_ALIGN_SIZE);
   if(pad == 0)
     pad = SU_MALLOC_ALIGN_SIZE;
-  if(pad < 8)
-    pad = 8;
+  if(pad < (2+sizeof(size_t)))
+    pad += SU_MALLOC_ALIGN_SIZE;
   retblock = (unsigned char *)memblock+pad;
   *((unsigned char *)retblock-1) = pad;
   *((unsigned char *)retblock-2) = SU_MALLOC_KEY;
-  *(SU_u32 *)((unsigned char *)retblock-6) = size;
+  *(size_t *)((unsigned char *)retblock-(2+sizeof(size_t))) = size;
   return retblock;
 }
 
-void *SU_calloc(SU_u32 nbelem,SU_u32 size)
+void *SU_calloc(size_t nbelem,size_t size)
 {
   void *ptr;
 
   ptr = SU_malloc(nbelem*size);
   if(ptr == NULL)
     return NULL;
-  memset(ptr,0,(size_t)(nbelem*size));
+  memset(ptr,0,nbelem*size);
   return ptr;
 }
 
-void *SU_realloc(void *memblock,SU_u32 size)
+void *SU_realloc(void *memblock,size_t size)
 {
   char *ptr;
-  SU_u32 oldsize;
+  size_t oldsize;
 
   if(memblock == NULL) /* If memblock is NULL -> malloc */
     return SU_malloc(size);
@@ -152,7 +156,7 @@ void *SU_realloc(void *memblock,SU_u32 size)
     SU_PrintFunc(true,"SkyUtils_SU_realloc Warning : bloc might have been underwritten");
     return NULL;
   }
-  oldsize = *(SU_u32 *)((unsigned char *)memblock-6);
+  oldsize = *(size_t *)((unsigned char *)memblock-(2+sizeof(size_t)));
   ptr = SU_malloc(size);
   memcpy(ptr,memblock,(size_t)oldsize);
   SU_free(memblock);
@@ -247,7 +251,7 @@ void SU_GetMallocConfig(int *check,int *trace,int *print)
     *print = SU_env_print;
 }
 
-void *SU_malloc_trace(SU_u32 size,char *file,SU_u32 line)
+void *SU_malloc_trace(size_t size,char *file,SU_u32 line)
 {
   SU_PAlloc Al = NULL;
   void *ptr;
@@ -286,7 +290,7 @@ void *SU_malloc_trace(SU_u32 size,char *file,SU_u32 line)
   }
   Al->ptr = ptr;
   Al->size = size;
-  Al->time = (SU_u32)time(NULL);
+  Al->time = time(NULL);
   SU_strcpy(Al->file,file,sizeof(Al->file));
   Al->line = line;
   Al->freed = false;
@@ -298,18 +302,18 @@ void *SU_malloc_trace(SU_u32 size,char *file,SU_u32 line)
   return (void *)((char *)ptr+8);
 }
 
-void *SU_calloc_trace(SU_u32 nbelem,SU_u32 size,char *file,SU_u32 line)
+void *SU_calloc_trace(size_t nbelem,size_t size,char *file,SU_u32 line)
 {
   void *ptr;
 
   ptr = SU_malloc_trace(nbelem*size,file,line);
   if(ptr == NULL)
     return NULL;
-  memset(ptr,0,(size_t)(nbelem*size));
+  memset(ptr,0,nbelem*size);
   return ptr;
 }
 
-void *SU_realloc_trace(void *memblock,SU_u32 size,char *file,SU_u32 line)
+void *SU_realloc_trace(void *memblock,size_t size,char *file,SU_u32 line)
 {
   SU_PList Ptr;
   void *new_ptr;
@@ -351,7 +355,7 @@ void *SU_realloc_trace(void *memblock,SU_u32 size,char *file,SU_u32 line)
     new_ptr = SU_malloc_trace(size,file,line);
     if(new_ptr != NULL)
     {
-      memcpy(new_ptr,memblock,(size_t)(((SU_PAlloc)Ptr->Data)->size));
+      memcpy(new_ptr,memblock,((SU_PAlloc)Ptr->Data)->size);
       SU_free_trace(memblock,file,line);
     }
     return new_ptr;
@@ -432,7 +436,7 @@ void SU_free_trace(void *memblock,char *file,SU_u32 line)
 
     if(((SU_PAlloc)Ptr->Data)->size <= SU_MALLOC_REUSE_SIZE)
     {
-      SU_u32 i;
+      size_t i;
       for(i=0;i<((SU_PAlloc)Ptr->Data)->size/sizeof(SU_u32);i++)
         *((SU_u32 *)memblock+i) = SU_MALLOC_REUSE_VALUE;
     }
@@ -450,7 +454,7 @@ void SU_free_trace(void *memblock,char *file,SU_u32 line)
         bool reused = false;
         if(((SU_PAlloc)Ptr2->Data)->size <= SU_MALLOC_REUSE_SIZE)
         {
-          SU_u32 i;
+          size_t i;
           for(i=0;i<((SU_PAlloc)Ptr2->Data)->size/sizeof(SU_u32);i++)
           {
             reused = *((SU_u32 *)((char *)((SU_PAlloc)Ptr2->Data)->ptr+8)+i) != SU_MALLOC_REUSE_VALUE;
@@ -528,7 +532,7 @@ void SU_check_memory(void)
       bool reused = false;
       if(((SU_PAlloc)Ptr->Data)->size <= SU_MALLOC_REUSE_SIZE)
       {
-        SU_u32 i;
+        size_t i;
         for(i=0;i<((SU_PAlloc)Ptr->Data)->size/sizeof(SU_u32);i++)
         {
           reused = *((SU_u32 *)((char *)((SU_PAlloc)Ptr->Data)->ptr+8)+i) != SU_MALLOC_REUSE_VALUE;
@@ -573,7 +577,7 @@ void SU_alloc_stats(SU_MEM_STATS_FUNC *Func)
 #endif /* _REENTRANT */
 }
 
-SU_u32 SU_alloc_total_size(void)
+size_t SU_alloc_total_size(void)
 {
   return SU_total_memory_allocated;
 }

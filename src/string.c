@@ -25,12 +25,18 @@
 #include <string.h>
 #include <stdarg.h>
 
+#ifdef _WIN32
+#pragma warning( disable: 4127)
+#endif /* _WIN32 */
+
 #ifndef SU_TRACE_INTERNAL
+#ifdef SU_MALLOC_TRACE
 #undef malloc
 #undef calloc
 #undef realloc
 #undef strdup
 #undef free
+#endif /* SU_MALLOC_TRACE */
 #endif /* !SU_TRACE_INTERNAL */
 
 char *SU_CurrentParseString;
@@ -92,7 +98,7 @@ SKYUTILS_API int SU_snprintf(char *dest,size_t len, const char *format,...) /* l
   {
     return -1;
   }
-  return new_len;
+  return (int)new_len;
 }
 
 SKYUTILS_API char *SU_nocasestrstr(char *text, char *tofind)  /* like strstr(), but nocase */
@@ -249,7 +255,7 @@ SKYUTILS_API bool SU_strwparse(const char *s,const char *wild,char buf[],int siz
      {
        buf_ptrs[count++] = &buf[buf_pos];
        *ptrs_count = count;
-       l = strlen(s) + 1; /* +1 for the \0 */
+       l = (int)(strlen(s) + 1); /* +1 for the \0 */
        if((l+buf_pos) > size)
          l = size - buf_pos;
        SU_strcpy(&buf[buf_pos],s,l);
@@ -281,7 +287,7 @@ SKYUTILS_API bool SU_strwparse(const char *s,const char *wild,char buf[],int siz
 
      buf_ptrs[count++] = &buf[buf_pos];
      *ptrs_count = count;
-     l = pos2-s+1; /* +1 for the \0 */
+     l = (int)(pos2-s+1); /* +1 for the \0 */
      if((l+buf_pos) > size)
        l = size - buf_pos;
      SU_strcpy(&buf[buf_pos],s,l);
@@ -437,7 +443,7 @@ SKYUTILS_API void SU_TrimRight(char *S)
 
   if(S == NULL)
     return;
-  i = strlen(S)-1;
+  i = (int)(strlen(S)-1);
   while(S[i] == ' ')
   {
     S[i] = 0;
@@ -487,9 +493,9 @@ SKYUTILS_API void SU_ExtractFileName(const char Path[],char FileName[],const int
 
 SKYUTILS_API char *SU_strchrl(const char *s,const char *l,char *found)
 {
-  long int len,i;
+  int len,i;
 
-  len = strlen(l);
+  len = (int)strlen(l);
   while(s[0] != 0)
   {
     for(i=0;i<len;i++)
@@ -512,7 +518,7 @@ SKYUTILS_API char *SU_strrchrl(const char *s,const char *l,char *found)
   int j;
 
   len = strlen(l);
-  for(j=strlen(s)-1;j>=0;j--)
+  for(j=(int)(strlen(s)-1);j>=0;j--)
   {
     for(i=0;i<len;i++)
     {

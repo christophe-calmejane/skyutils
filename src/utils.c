@@ -40,12 +40,18 @@
 #include <time.h>
 #endif /* __GNUC__ */
 
+#ifdef _WIN32
+#pragma warning( disable: 4100 4152)
+#endif /* _WIN32 */
+
 #ifndef SU_TRACE_INTERNAL
+#ifdef SU_MALLOC_TRACE
 #undef malloc
 #undef calloc
 #undef realloc
 #undef strdup
 #undef free
+#endif /* SU_MALLOC_TRACE */
 #endif /* !SU_TRACE_INTERNAL */
 
 extern char *SW_UserHeader;
@@ -105,7 +111,7 @@ static int skip_uname (const char *url)
   /* If a `@' was found before the first occurrence of `/', skip
      it.  */
   if (*p == '@')
-    return p - url + 1;
+    return (int)(p - url + 1);
   else
     return 0;
 }
@@ -280,7 +286,7 @@ SKYUTILS_API char *SU_LoadUserHeaderFile(const char FName[])
   {
     if(S[0] == 0)
       continue;
-    len += strlen(S) + 2; /* +2 for \n */
+    len += (int)(strlen(S) + 2); /* +2 for \n */
     if(buf == NULL)
     {
       buf = (char *) malloc(len);

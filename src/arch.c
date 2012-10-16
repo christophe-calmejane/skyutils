@@ -50,11 +50,13 @@ static HEAP_ALLOC(SU_AR_wrkmem,LZO1X_1_MEM_COMPRESS);
 #endif /* HAVE_MINILZO */
 
 #ifndef SU_TRACE_INTERNAL
+#ifdef SU_MALLOC_TRACE
 #undef malloc
 #undef calloc
 #undef realloc
 #undef strdup
 #undef free
+#endif /* SU_MALLOC_TRACE */
 #endif /* !SU_TRACE_INTERNAL */
 
 #define SU_AR_SIGNATURE "SkyArch4"
@@ -341,7 +343,7 @@ SU_PArch _SU_AR_ReadHeaders(FILE *fp)
       }
     }
     Arch->Resources[i].Offset = ftell(fp);
-    if(fseek(fp,(size_t)(Arch->Resources[i].CompSize),SEEK_CUR) != 0)
+    if(fseek(fp,(long)(Arch->Resources[i].CompSize),SEEK_CUR) != 0)
     {
       SU_AR_CloseArchive(Arch);
       return NULL;
@@ -393,7 +395,7 @@ bool _SU_AR_Flush(SU_PArch Arch)
     }
     else
     {
-      c = strlen(Arch->Resources[i].Name) + 1; /* Store the tailing \0 */
+      c = (SU_u32)strlen(Arch->Resources[i].Name) + 1; /* Store the tailing \0 */
       if(fwrite(&c,(size_t)1,sizeof(c),Arch->fp) != sizeof(c))
         res = false;
       if(fwrite(Arch->Resources[i].Name,(size_t)1,c,Arch->fp) != c)
@@ -441,7 +443,7 @@ SU_PRes _SU_AR_ReadResource(SU_PArch Arch,const SU_u32 ResNum,bool GetData)
       SU_AR_FreeRes(Res);
       return NULL;
     }
-    if(fseek(Arch->fp,(size_t)(RH->Offset),SEEK_SET) != 0)
+    if(fseek(Arch->fp,(long)(RH->Offset),SEEK_SET) != 0)
     {
       free(compressed);
       SU_AR_FreeRes(Res);
@@ -524,7 +526,7 @@ bool _SU_AR_ReadResourceToFile(SU_PArch Arch,const SU_u32 ResNum,const char File
     return false;
   fclose(out);
 
-  if(fseek(Arch->fp,(size_t)(RH->Offset),SEEK_SET) != 0)
+  if(fseek(Arch->fp,(long)(RH->Offset),SEEK_SET) != 0)
   {
     unlink(FileName);
     return false;
@@ -645,7 +647,7 @@ SKYUTILS_API SU_PArch SU_AR_OpenArchive(const char FileName[])
     fclose(fp);
     return NULL;
   }
-  if(fseek(fp,(size_t)ofs,SEEK_SET) != 0)
+  if(fseek(fp,(long)ofs,SEEK_SET) != 0)
   {
     fclose(fp);
     return NULL;

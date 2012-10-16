@@ -24,12 +24,18 @@
 static int SU_RB_LastError = SU_RB_ERR_SUCCESS;
 static int SU_RB_Access64Mode = 0;
 
+#ifdef _WIN32
+#pragma warning( disable: 4100)
+#endif /* _WIN32 */
+
 #ifndef SU_TRACE_INTERNAL
+#ifdef SU_MALLOC_TRACE
 #undef malloc
 #undef calloc
 #undef realloc
 #undef strdup
 #undef free
+#endif /* SU_MALLOC_TRACE */
 #endif /* !SU_TRACE_INTERNAL */
 
 #ifdef _WIN32
@@ -204,7 +210,7 @@ SKYUTILS_API bool SU_RB_GetStrValue(const char Key[],char *buf,int buf_len,const
       return false;
     }
   }
-  R = RegQueryValueEx(Handle,p,NULL,NULL,buf,&Size);
+  R = RegQueryValueEx(Handle,p,NULL,NULL,(LPBYTE)buf,&Size);
   RegCloseKey(Handle);
   if(R != ERROR_SUCCESS)
   {
@@ -336,7 +342,7 @@ SKYUTILS_API bool SU_RB_GetBinValue(const char Key[],char *buf,int buf_len,char 
       return false;
     }
   }
-  R = RegQueryValueEx(Handle,p,NULL,NULL,buf,&Size);
+  R = RegQueryValueEx(Handle,p,NULL,NULL,(LPBYTE)buf,&Size);
   RegCloseKey(Handle);
   if(R != ERROR_SUCCESS)
   {
@@ -409,7 +415,7 @@ SKYUTILS_API bool SU_RB_SetStrValue(const char Key[],const char Value[])
     return false;
   }
   p++;
-  R = RegSetValueEx(Handle,p,0,REG_SZ,Value,strlen(Value)+1);
+  R = RegSetValueEx(Handle,p,0,REG_SZ,(const BYTE *)Value,(DWORD)(strlen(Value)+1));
   RegCloseKey(Handle);
   if(R == ERROR_SUCCESS)
   {
@@ -471,7 +477,7 @@ SKYUTILS_API bool SU_RB_SetBinValue(const char Key[],const char *Value,int val_l
     return false;
   }
   p++;
-  R = RegSetValueEx(Handle,p,0,REG_BINARY,Value,val_len);
+  R = RegSetValueEx(Handle,p,0,REG_BINARY,(const BYTE *)Value,val_len);
   RegCloseKey(Handle);
   if(R == ERROR_SUCCESS)
   {
@@ -596,7 +602,7 @@ SKYUTILS_API bool SU_RB_EnumStrValue(HKEY Key,int Idx,char *Name,int name_len,ch
 {
   int len = name_len;
   int len2 = value_len;
-  LONG ret = RegEnumValue(Key,Idx,Name,(ULONG *)&len,NULL,NULL,Value,(ULONG *)&len2);
+  LONG ret = RegEnumValue(Key,Idx,Name,(ULONG *)&len,NULL,NULL,(LPBYTE)Value,(ULONG *)&len2);
 
   return(ret == ERROR_SUCCESS);
 }

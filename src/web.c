@@ -26,12 +26,18 @@
 
 #include "skyutils.h"
 
+#ifdef _WIN32
+#pragma warning( disable: 4100 4127)
+#endif /* _WIN32 */
+
 #ifndef SU_TRACE_INTERNAL
+#ifdef SU_MALLOC_TRACE
 #undef malloc
 #undef calloc
 #undef realloc
 #undef strdup
 #undef free
+#endif /* SU_MALLOC_TRACE */
 #endif /* !SU_TRACE_INTERNAL */
 
 #define SW_DEFAULT_USER_AGENT "Mozilla/6.0 (compatible; MSIE 5.01; Windows NT)"
@@ -419,7 +425,7 @@ char *ExtractPath(char *URL,bool proxy)
     URL = strchr(URL,'/');
     if(URL == NULL)
     {
-      return SU_strdup("/");
+      return SU_strdup((char *)"/");
     }
   }
   path = SU_strdup(URL);
@@ -435,7 +441,7 @@ char *ExtractPath(char *URL,bool proxy)
   if(c == '/')
     return path;
 
-  i = strlen(path)-1;
+  i = (int)(strlen(path)-1);
   while(path[i] != '/')
   {
     if(i == 0)
@@ -505,8 +511,11 @@ int GetHostFromURL(const char *URL,char Host[],int Length,bool proxy,char URL_OU
   if(SU_nocasestrstr((char *)URL,"https") == URL)
   {
 #ifndef SU_USE_SSL
-    printf("SkyUtils_GetHostFromURL Error : HTTPS requested, but skyutils not compiled with SSL support. Exiting !\n");
-    return -10;
+    if(1)
+    {
+      printf("SkyUtils_GetHostFromURL Error : HTTPS requested, but skyutils not compiled with SSL support. Exiting !\n");
+      return -10;
+    }
     *ssl_mode = false;
 #else /* SU_USE_SSL */
     *ssl_mode = true;
@@ -557,7 +566,7 @@ int GetHostFromURL(const char *URL,char Host[],int Length,bool proxy,char URL_OU
     }
     return 0;
   }
-  len = ptr2 - ptr + 1; /* +1 for the \0 */
+  len = (int)(ptr2 - ptr + 1); /* +1 for the \0 */
   if(len > Length)
     len = Length;
   if(ReplaceHost[0] == 0)
@@ -772,13 +781,13 @@ SU_PAnswer ParseBuffer(SU_PAnswer Ans,char *Buf,int *len,SU_PHTTPActions Act,boo
       Ans->Location = SU_strdup(ptr2);
     }
     /* End of parse header command */
-    *len -= (saf - Buf) + 2;
+    *len -= (int)((saf - Buf) + 2);
     memmove(Buf,saf+2,*len);
   }
   return Ans;
 }
 
-int CreateConnection(char Host[],int Port,SSL **ssl)
+static int CreateConnection(char Host[],int Port,SSL **ssl)
 {
   SU_SOCKET Sock;
   struct sockaddr_in sin;
@@ -788,7 +797,7 @@ int CreateConnection(char Host[],int Port,SSL **ssl)
   if(Sock == -1)
     return -1;
   sin.sin_family = AF_INET;
-  sin.sin_port = htons(Port);
+  sin.sin_port = htons((unsigned short)Port);
   sin.sin_addr.s_addr = inet_addr(Host);
   if(sin.sin_addr.s_addr == INADDR_NONE)
   {
@@ -818,14 +827,14 @@ int CreateConnection(char Host[],int Port,SSL **ssl)
     }
   }
 #endif
-  return Sock;
+  return (int)Sock;
 }
 
 /* Base64 encode a string */
 char * http_base64_encode(const char *text)
 {
 
-  const char b64_alphabet[65] = {
+  const char b64_alphabet[] = {
       "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
       "abcdefghijklmnopqrstuvwxyz"
       "0123456789+/=" };
@@ -844,7 +853,7 @@ char * http_base64_encode(const char *text)
   /* Use 'buffer' to store the output. Work out how big it should be...
    * This must be a multiple of 4 bytes */
 
-  inlen = strlen( text );
+  inlen = (int)(strlen( text ));
   /* check our arg...avoid a pesky FPE */
   if (inlen == 0)
     {
@@ -884,7 +893,7 @@ char * http_base64_encode(const char *text)
   return buffer;
 }
 
-static int SendBuffer(int Sock,char *buf,int len,SSL *ssl,bool verbose)
+static int SendBuffer(SU_SOCKET Sock,char *buf,int len,SSL *ssl,bool verbose)
 {
   int res;
 
@@ -913,7 +922,7 @@ static int SendBuffer(int Sock,char *buf,int len,SSL *ssl,bool verbose)
   return res;
 }
 
-static int SendFile(int Sock,FILE *fp,int FLen,SSL *ssl)
+static int SendFile(SU_SOCKET Sock,FILE *fp,int FLen,SSL *ssl)
 {
   int res = 0;
   char buf[16000];
@@ -1010,7 +1019,7 @@ bool SendCommand(SU_SOCKET Sock,SU_PHTTPActions Act,bool proxy,SSL *ssl)
     SU_snprintf(buf,buf_len,"%s %s HTTP/1.0%c%cHost: %s%c%c",Com,Act->URL,0x0D,0x0A,Act->Host,0x0D,0x0A);
   else
     SU_snprintf(buf,buf_len,"%s %s?%s HTTP/1.0%c%cHost: %s%c%c",Com,Act->URL,Act->URL_Params,0x0D,0x0A,Act->Host,0x0D,0x0A);
-  len = strlen(buf);
+  len = (int)(strlen(buf));
   /* Now add header from file, or default one */
   if(SW_UserHeader == NULL)
   {
@@ -1020,13 +1029,13 @@ bool SendCommand(SU_SOCKET Sock,SU_PHTTPActions Act,bool proxy,SSL *ssl)
   }
   else
     SU_snprintf(buf+len,buf_len-len,"%s",SW_UserHeader);
-  len = strlen(buf);
+  len = (int)(strlen(buf));
 
   Ptr = SW_Cookies;
   cook = 0;
   while(Ptr != NULL)
   {
-    blen = strlen(((SU_PCookie)Ptr->Data)->Domain)+2;
+    blen = (int)(strlen(((SU_PCookie)Ptr->Data)->Domain)+2);
     if(strchr(Act->Host,':') == NULL)
     {
       tmp = (char *) malloc(blen);
@@ -1044,7 +1053,7 @@ bool SendCommand(SU_SOCKET Sock,SU_PHTTPActions Act,bool proxy,SSL *ssl)
         do_it = true;
       else
       {
-        blen2 = strlen(((SU_PCookie)Ptr->Data)->Path)+2;
+        blen2 = (int)(strlen(((SU_PCookie)Ptr->Data)->Path)+2);
         tmp2 = (char *) malloc(blen2);
         SU_snprintf(tmp2,blen2,"%s*",((SU_PCookie)Ptr->Data)->Path);
         tmp3 = ExtractPath(Act->URL,proxy);
@@ -1058,13 +1067,13 @@ bool SendCommand(SU_SOCKET Sock,SU_PHTTPActions Act,bool proxy,SSL *ssl)
         if(cook == 0)
         {
           SU_snprintf(buf+len,buf_len-len,"Cookie: %s=%s",((SU_PCookie)Ptr->Data)->Name,((SU_PCookie)Ptr->Data)->Value);
-          len = strlen(buf);
+          len = (int)(strlen(buf));
           cook = 1;
         }
         else
         {
           SU_snprintf(buf+len,buf_len-len,"; %s=%s",((SU_PCookie)Ptr->Data)->Name,((SU_PCookie)Ptr->Data)->Value);
-          len = strlen(buf);
+          len = (int)(strlen(buf));
         }
       }
     }
@@ -1079,7 +1088,7 @@ bool SendCommand(SU_SOCKET Sock,SU_PHTTPActions Act,bool proxy,SSL *ssl)
   if(Act->Referer != NULL)
   {
     SU_snprintf(buf+len,buf_len-len,"Referer: %s%c%c",Act->Referer,0x0D,0x0A);
-    len = strlen(buf);
+    len = (int)(strlen(buf));
   }
   /* Manage proxy authorization */
   if(proxy != 0)
@@ -1097,7 +1106,7 @@ bool SendCommand(SU_SOCKET Sock,SU_PHTTPActions Act,bool proxy,SSL *ssl)
        if(auth64 != NULL)
        {
           SU_snprintf(buf+len,buf_len-len,"Proxy-Authorization: Basic %s%c%c",auth64,0x0D,0x0A);
-    	  len = strlen(buf);
+    	  len = (int)(strlen(buf));
           free(auth64);
        }
     }
@@ -1107,7 +1116,7 @@ bool SendCommand(SU_SOCKET Sock,SU_PHTTPActions Act,bool proxy,SSL *ssl)
     if(Act->MultiParts == NULL) /* Post_Data */
     {
       SU_snprintf(buf+len,buf_len-len,"Content-type: application/x-www-form-urlencoded%c%cContent-length: %d%c%c%c%c",0x0D,0x0A,Act->Post_Length,0x0D,0x0A,0x0D,0x0A);
-      len = strlen(buf);
+      len = (int)(strlen(buf));
       memcpy(buf+len,Act->Post_Data,Act->Post_Length);
       len += Act->Post_Length;
       buf[len++] = 0x0D;
@@ -1134,14 +1143,14 @@ bool SendCommand(SU_SOCKET Sock,SU_PHTTPActions Act,bool proxy,SSL *ssl)
         tid &= 0xFFF;
 
       SU_snprintf(boundary,sizeof(boundary),"---------------------------%06x%04x%03x",tim,pid,tid);
-      boundary_length = strlen(boundary);
+      boundary_length = (int)(strlen(boundary));
       while(Ptr != NULL)
       {
         Part = (SU_PHTTPPart) Ptr->Data;
         multi_length += boundary_length + 2 + 2; /* +2 (--) before boundary, + 2 (\n) after boundary */
         if(Part->Header)
         {
-          multi_length += strlen(Part->Header) + 2; /* +2 after header */
+          multi_length += (int)(strlen(Part->Header) + 2); /* +2 after header */
         }
         if(Part->FileName)
         {
@@ -1160,7 +1169,7 @@ bool SendCommand(SU_SOCKET Sock,SU_PHTTPActions Act,bool proxy,SSL *ssl)
       }
       multi_length += boundary_length + 2 + 2 + 2; /* +2 (--) before boundary, +2 (--) for final boundary, +2 (\n) after final boundary */
       SU_snprintf(buf+len,buf_len,"Content-type: multipart/form-data; boundary=%s%c%cContent-length: %d%c%c%c%c",boundary,0x0D,0x0A,multi_length,0x0D,0x0A,0x0D,0x0A);
-      len = strlen(buf);
+      len = (int)(strlen(buf));
       buf[len] = 0;
       SendBuffer(Sock,buf,len,ssl,true);
 
@@ -1171,13 +1180,13 @@ bool SendCommand(SU_SOCKET Sock,SU_PHTTPActions Act,bool proxy,SSL *ssl)
         if(Part->Header)
         {
           SU_snprintf(buf,buf_len,"--%s%c%c%s%c%c%c%c",boundary,0x0D,0x0A,Part->Header,0x0D,0x0A,0x0D,0x0A);
-          len = strlen(buf);
+          len = (int)(strlen(buf));
           buf[len] = 0;
         }
         else
         {
           SU_snprintf(buf,buf_len,"--%s%c%c%c%c",boundary,0x0D,0x0A,0x0D,0x0A);
-          len = strlen(buf);
+          len = (int)(strlen(buf));
           buf[len] = 0;
         }
         SendBuffer(Sock,buf,len,ssl,true);
@@ -1206,7 +1215,7 @@ bool SendCommand(SU_SOCKET Sock,SU_PHTTPActions Act,bool proxy,SSL *ssl)
         }
         /* End of boundary */
         SU_snprintf(buf,buf_len,"%c%c",0x0D,0x0A);
-        len = strlen(buf);
+        len = (int)(strlen(buf));
         buf[len] = 0;
         SendBuffer(Sock,buf,len,ssl,true);
         multi_sent += len;
@@ -1214,7 +1223,7 @@ bool SendCommand(SU_SOCKET Sock,SU_PHTTPActions Act,bool proxy,SSL *ssl)
       }
       /* Final boundary */
       SU_snprintf(buf,buf_len,"--%s--%c%c",boundary,0x0D,0x0A);
-      len = strlen(buf);
+      len = (int)(strlen(buf));
       buf[len] = 0;
       SendBuffer(Sock,buf,len,ssl,true);
       multi_sent += len;
@@ -1229,7 +1238,7 @@ bool SendCommand(SU_SOCKET Sock,SU_PHTTPActions Act,bool proxy,SSL *ssl)
     if(Act->ContentType != NULL)
     {
       SU_snprintf(buf+len,buf_len-len,"Content-Type: %s%c%c",Act->ContentType,0x0D,0x0A);
-      len = strlen(buf);
+      len = (int)(strlen(buf));
     }
     buf[len++] = 0x0D;
     buf[len++] = 0x0A;
@@ -1252,7 +1261,7 @@ bool SendCommand(SU_SOCKET Sock,SU_PHTTPActions Act,bool proxy,SSL *ssl)
       printf("SkyUtils_SendCommand : Sending file %s of length %ld\n",Act->FileName,FLen);
 #endif /* __unix__ */
     SU_snprintf(buf+len,buf_len-len,"Content-Type: application/octet-stream%c%cContent-length: %ld%c%c%c%c",FLen,0x0D,0x0A,0x0D,0x0A,0x0D,0x0A);
-    len = strlen(buf);
+    len = (int)(strlen(buf));
     res = SendBuffer(Sock,buf,len,ssl,true);
     res = SendFile(Sock,fp,(int)FLen,ssl);
     fclose(fp);
@@ -1293,7 +1302,7 @@ SU_PAnswer WaitForAnswer(SU_SOCKET Sock,SU_PHTTPActions Act,bool proxy,SSL *ssl)
   FD_SET(Sock,&rfds);
   tv.tv_sec = SW_SocketTimeout;
   tv.tv_usec = 0;
-  retval = select(Sock+1,&rfds,NULL,NULL,&tv);
+  retval = select((int)(Sock+1),&rfds,NULL,NULL,&tv);
   if(retval != 1)
     return NULL;
 #ifdef SU_USE_SSL
@@ -1316,7 +1325,7 @@ SU_PAnswer WaitForAnswer(SU_SOCKET Sock,SU_PHTTPActions Act,bool proxy,SSL *ssl)
     FD_SET(Sock,&rfds);
     tv.tv_sec = SW_SocketTimeout;
     tv.tv_usec = 0;
-    retval = select(Sock+1,&rfds,NULL,NULL,&tv);
+    retval = select((int)(Sock+1),&rfds,NULL,NULL,&tv);
     if(retval == 0) /* Time out */
     {
       if(Ans->Data_Length == -1)
@@ -1383,7 +1392,7 @@ bool SU_SendProxySSLConnect(SU_SOCKET Sock,char *Host,int Port,int *Code)
   if(SW_UserAgent == NULL)
     SU_SetUserAgent(SW_DEFAULT_USER_AGENT);
   SU_snprintf(buf,sizeof(buf),"CONNECT %s:%d HTTP/1.0%c%cUser-Agent: %s%c%cHost: %s%c%cProxy-Connection: close%c%cConnection: close%c%c%c%c",Host,Port,0x0D,0x0A,SW_UserAgent,0x0D,0x0A,Host,0x0D,0x0A,0x0D,0x0A,0x0D,0x0A,0x0D,0x0A);
-  len = strlen(buf);
+  len = (int)(strlen(buf));
   res = send(Sock,buf,len,0);
   if(res != len)
     return false;
@@ -1392,7 +1401,7 @@ bool SU_SendProxySSLConnect(SU_SOCKET Sock,char *Host,int Port,int *Code)
   FD_SET(Sock,&rfds);
   tv.tv_sec = SW_SocketTimeout;
   tv.tv_usec = 0;
-  retval = select(Sock+1,&rfds,NULL,NULL,&tv);
+  retval = select((int)(Sock+1),&rfds,NULL,NULL,&tv);
   if(retval != 1)
     return false;
   res = recv(Sock,buf,sizeof(buf)-1,0);
@@ -1418,7 +1427,7 @@ bool SU_SendProxySSLConnect(SU_SOCKET Sock,char *Host,int Port,int *Code)
           break;
         }
       }
-      BufPos -= ptr+2-buf-1; /* -1 for \0 */
+      BufPos -= (int)(ptr+2-buf-1); /* -1 for \0 */
       memmove(buf,ptr+2,BufPos);
       ptr = strstr(buf,"\r\n");
     }
@@ -1428,7 +1437,7 @@ bool SU_SendProxySSLConnect(SU_SOCKET Sock,char *Host,int Port,int *Code)
     FD_SET(Sock,&rfds);
     tv.tv_sec = SW_SocketTimeout;
     tv.tv_usec = 0;
-    retval = select(Sock+1,&rfds,NULL,NULL,&tv);
+    retval = select((int)(Sock+1),&rfds,NULL,NULL,&tv);
     if(retval != 1)
       return found;
     res = recv(Sock,buf+BufPos,sizeof(buf)-BufPos-1,0);
@@ -1440,7 +1449,7 @@ SKYUTILS_API char *SU_EncodeURL(const char URL_in[],char URL_out[],int URL_out_l
 {
   char NB[10];
   int i,pos;
-  int len = strlen(URL_in);
+  int len = (int)(strlen(URL_in));
 
   pos = 0;
   for(i=0;i<len;i++)
@@ -1743,7 +1752,7 @@ SKYUTILS_API SU_PInput SU_GetNextInput(void)
       break;
     if(q > r) /* Attention ici, si on veux plus tard recup les non Name=Value */
       break;
-    len = q-p;
+    len = (int)(q-p);
     if(len >= sizeof(buf))
       len = sizeof(buf) - 1;
     memcpy(buf,p,len);
@@ -1786,7 +1795,7 @@ SKYUTILS_API SU_PInput SU_GetNextInput(void)
         else
           q = r;
       }
-      len = q-p;
+      len = (int)(q-p);
       if(len <= 0)
         continue;
       tmp = (char *) malloc(len+1);
@@ -1808,7 +1817,7 @@ SKYUTILS_API SU_PInput SU_GetNextInput(void)
   if(textarea)
   {
     if(In->Type == NULL)
-      In->Type = SU_strdup("textarea");
+      In->Type = SU_strdup((char *)"textarea");
     p = SU_nocasestrstr(r+1,"</textarea>");
     if(p == NULL)
     {
@@ -1887,7 +1896,7 @@ SKYUTILS_API SU_PImage SU_GetNextImage(void)
   else
     c = ' ';
   q = strchr(p,c);
-  len = q-p;
+  len = (int)(q-p);
   tmp = (char *) malloc(len+1);
   memcpy(tmp,p,len);
   tmp[len] = 0;
@@ -1993,7 +2002,7 @@ SKYUTILS_API SU_PHTTPActions SU_RetrieveLink(const char URL[],const char Ans[],c
       while(strncasecmp(tmp2,"../",3) == 0)
       {
         tmp2+=3;
-        i = strlen(Act->URL) - 1;
+        i = (int)(strlen(Act->URL) - 1);
         found = false;
         while(i >= 0)
         {
@@ -2104,7 +2113,7 @@ SKYUTILS_API SU_PHTTPActions SU_RetrieveFrame(const char URL[],const char Ans[],
       while(strncasecmp(tmp2,"../",3) == 0)
       {
         tmp2+=3;
-        i = strlen(Act->URL) - 1;
+        i = (int)(strlen(Act->URL) - 1);
         found = false;
         while(i >= 0)
         {
@@ -2301,7 +2310,7 @@ SKYUTILS_API SU_PForm SU_RetrieveForm(const char Ans[],const int num)
         break;
       if(q > r) /* Attention ici, si on veux plus tard recup les non Name=Value */
         break;
-      len = q-p;
+      len = (int)(q-p);
       if(len >= sizeof(buf))
         len = sizeof(buf) - 1;
       memcpy(buf,p,len);
@@ -2344,7 +2353,7 @@ SKYUTILS_API SU_PForm SU_RetrieveForm(const char Ans[],const int num)
           else
             q = r;
         }
-        len = q-p;
+        len = (int)(q-p);
         if(len <= 0)
           continue;
         tmp = (char *) malloc(len+1);
@@ -2367,7 +2376,7 @@ SKYUTILS_API SU_PForm SU_RetrieveForm(const char Ans[],const int num)
     if(textarea)
     {
       if(In->Type == NULL)
-        In->Type = SU_strdup("textarea");
+        In->Type = SU_strdup((char *)"textarea");
       q = SU_nocasestrstr(p+1,"</textarea>");
       if(q == NULL)
       {
@@ -2387,7 +2396,7 @@ SKYUTILS_API SU_PForm SU_RetrieveForm(const char Ans[],const int num)
       }
     }
     if(In->Type == NULL)
-      In->Type = SU_strdup("text");
+      In->Type = SU_strdup((char *)"text");
     if(In->Name != NULL)
     {
 #ifdef __unix__
@@ -2443,7 +2452,7 @@ SKYUTILS_API char *SU_AddLocationToUrl(const char *URL,const char *Host,const ch
 
   if(strncasecmp(Location,"http://",7) != 0) /* Relative path */
   {
-    len = strlen(Host)+strlen(URL)+strlen(Location)+strlen("https://")+1;
+    len = (int)(strlen(Host)+strlen(URL)+strlen(Location)+strlen("https://")+1);
     ptr = (char *) malloc(len);
     if(Location[0] == '/')
     { /* Relative path, but absolute on the site */
@@ -2465,7 +2474,7 @@ SKYUTILS_API char *SU_AddLocationToUrl(const char *URL,const char *Host,const ch
         SU_strcat(ptr,"/",len);
       else
       {
-        i = strlen(ptr) - 1;
+        i = (int)(strlen(ptr) - 1);
         while(i>=0)
         {
           if(ptr[i] == '/')
@@ -2480,7 +2489,7 @@ SKYUTILS_API char *SU_AddLocationToUrl(const char *URL,const char *Host,const ch
       /* Check for '../' in Location */
       while(strncmp(Location+pos,"../",3) == 0)
       {
-        i = strlen(ptr) - 1 - 1; /* Start from before the trailing '/' */
+        i = (int)(strlen(ptr) - 1 - 1); /* Start from before the trailing '/' */
         while(i>=0)
         {
           if(ptr[i] == '/')
@@ -2529,7 +2538,7 @@ SKYUTILS_API char *SU_GetStringFromHtml(const char Ans[],const char TextBefore[]
   q = strchr(p,c);
   if(q == NULL)
     return NULL;
-  len = q-p;
+  len = (int)(q-p);
   tmp = (char *) malloc(len+1);
   memcpy(tmp,p,len);
   tmp[len] = 0;
