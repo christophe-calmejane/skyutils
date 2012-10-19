@@ -529,7 +529,7 @@ SKYUTILS_API void SU_GetTicks(SU_TICKS *tick)
 
 SKYUTILS_API SU_u32 SU_ElapsedTime(SU_TICKS t1,SU_TICKS t2,SU_CPUSPEED speed)
 {
-  return t2 - t1;
+  return (SU_u32)(t2 - t1);
 }
 #else /* !_WIN64 */
 #ifndef _M_IX86
