@@ -1,0 +1,7 @@
+# Temp files
+*.o
+*.a
+*.lo
+*.la
+*.so
+
