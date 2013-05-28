@@ -28,7 +28,7 @@
 #endif /* FD_SETSIZE */
 #define FD_SETSIZE 256
 
-#define SKYUTILS_VERSION "3.91"
+#define SKYUTILS_VERSION "3.92"
 #define SKYUTILS_AUTHOR "Christophe Calméjane"
 
 #if defined(__MACH__) || defined(_AIX)
@@ -247,7 +247,11 @@ SKYUTILS_API int SU_GetPortByName(char *port,char *proto); /* Returns port numbe
 SKYUTILS_API char *SU_GetMachineName(char *RemoteHost);    /* Extracts the machine name from a full host */
 SKYUTILS_API char *SU_NameOfPort(char *Host);              /* Returns the host name matching the given ip */
 SKYUTILS_API char *SU_AdrsOfPort(char *Host);              /* Returns the ip adrs matching the given host */
-SKYUTILS_API unsigned int SU_GetSocketPort(SU_SOCKET sock); /* Returns the port associated with given socket */
+SKYUTILS_API const char* SU_GetSocketName(SU_SOCKET sock); /* Returns the local computer's ip address for the given socket */
+SKYUTILS_API unsigned int SU_GetSocketPort(SU_SOCKET sock); /* Returns the local computer's port associated with given socket */
+SKYUTILS_API const char* SU_GetSocketRemoteName(SU_SOCKET sock); /* Returns the remote computer's ip address for the given socket */
+SKYUTILS_API unsigned int SU_GetSocketRemotePort(SU_SOCKET sock); /* Returns the remote computer's port associated with given socket */
+
 
 /* 
  Sends a buffer to socket.

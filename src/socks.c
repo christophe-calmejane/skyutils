@@ -85,6 +85,19 @@ SKYUTILS_API char *SU_AdrsOfPort(char *Host)
   return inet_ntoa(inp);
 }
 
+SKYUTILS_API const char* SU_GetSocketName(SU_SOCKET sock)
+{
+	SU_SOCKLEN_T len;
+	struct sockaddr_in SAddr;
+
+	len = sizeof(SAddr);
+	if(getsockname(sock,(struct sockaddr *)&SAddr,&len) != -1)
+	{
+		return inet_ntoa(SAddr.sin_addr);
+	}
+	return "";
+}
+
 SKYUTILS_API unsigned int SU_GetSocketPort(SU_SOCKET sock)
 {
   SU_SOCKLEN_T len;
@@ -92,6 +105,32 @@ SKYUTILS_API unsigned int SU_GetSocketPort(SU_SOCKET sock)
 
   len = sizeof(SAddr);
   if(getsockname(sock,(struct sockaddr *)&SAddr,&len) != -1)
+  {
+    return ntohs(SAddr.sin_port);
+  }
+  return 0;
+}
+
+SKYUTILS_API const char* SU_GetSocketRemoteName(SU_SOCKET sock)
+{
+	SU_SOCKLEN_T len;
+	struct sockaddr_in SAddr;
+
+	len = sizeof(SAddr);
+	if(getpeername(sock,(struct sockaddr *)&SAddr,&len) != -1)
+	{
+		return inet_ntoa(SAddr.sin_addr);
+	}
+	return "";
+}
+
+SKYUTILS_API unsigned int SU_GetSocketRemotePort(SU_SOCKET sock)
+{
+  SU_SOCKLEN_T len;
+  struct sockaddr_in SAddr;
+
+  len = sizeof(SAddr);
+  if(getpeername(sock,(struct sockaddr *)&SAddr,&len) != -1)
   {
     return ntohs(SAddr.sin_port);
   }
