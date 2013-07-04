@@ -28,7 +28,7 @@
 #endif /* FD_SETSIZE */
 #define FD_SETSIZE 256
 
-#define SKYUTILS_VERSION "3.92"
+#define SKYUTILS_VERSION "3.93"
 #define SKYUTILS_AUTHOR "Christophe Calméjane"
 
 #if defined(__MACH__) || defined(_AIX)

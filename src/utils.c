@@ -63,18 +63,12 @@ int SU_DebugLevel = 9;
 int SU_DebugLevel = 0;
 #endif /* DEBUG */
 
-#ifdef _WIN32
-FILE *SU_LogFile = NULL;
-#endif /* _WIN32 */
-
 SKYUTILS_API FILE *SU_OpenLogFile(const char LogName[])
 {
   FILE *fp;
 
   fp = fopen(LogName,"at");
-  if(fp == NULL)
-    printf("SkyUtils_SU_OpenLogFile Warning : Error opening logfile '%s' (%d:%s)\n",LogName,errno,strerror(errno));
-  return fp;
+	return fp;
 }
 
 SKYUTILS_API void SU_CloseLogFile(FILE *fp)
