@@ -63,6 +63,10 @@ int SU_DebugLevel = 9;
 int SU_DebugLevel = 0;
 #endif /* DEBUG */
 
+#ifdef _WIN32
+FILE *SU_LogFile = NULL;
+#endif /* _WIN32 */
+
 SKYUTILS_API FILE *SU_OpenLogFile(const char LogName[])
 {
   FILE *fp;
