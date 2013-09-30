@@ -28,7 +28,7 @@
 #endif /* FD_SETSIZE */
 #define FD_SETSIZE 256
 
-#define SKYUTILS_VERSION "3.93"
+#define SKYUTILS_VERSION "3.94"
 #define SKYUTILS_AUTHOR "Christophe Calméjane"
 
 #if defined(__MACH__) || defined(_AIX)
@@ -342,7 +342,7 @@ SKYUTILS_API void SU_SockUninit(void); /* Uninits Socks (MUST BE CALL BEFORE EXI
 SKYUTILS_API char *SU_strcat(char *dest,const char *src,size_t len); /* like strncat, but always NULL terminate dest */
 SKYUTILS_API char *SU_strcpy(char *dest,const char *src,size_t len); /* like strncpy, but doesn't pad with 0, and always NULL terminate dest */
 SKYUTILS_API int SU_snprintf(char *dest,size_t len, const char *format,...); /* like snprintf, but always NULL terminate dest - Returns -1 if string truncated */
-SKYUTILS_API char *SU_nocasestrstr(char *text, char *tofind);  /* like strstr(), but nocase */
+SKYUTILS_API char *SU_nocasestrstr(char *text, const char *tofind);  /* like strstr(), but nocase */
 SKYUTILS_API bool SU_strwcmp(const char *s,const char *wild); /* True if wild equals s (wild may use '*') */
 SKYUTILS_API bool SU_nocasestrwcmp(const char *s,const char *wild); /* Same as strwcmp but without case */
 SKYUTILS_API bool SU_strwparse(const char *s,const char *wild,char buf[],int size,char *buf_ptrs[],int *ptrs_count); /* True if wild equals s (wild may use '*') */
@@ -706,13 +706,14 @@ SKYUTILS_API extern SU_PList SW_Cookies; /* SU_PCookie */
 /*               Threads functions          */
 /* **************************************** */
 #ifndef SU_INCLUDE_NO_THREAD
+#define SU_THREAD_RET_TYPE unsigned
 #ifdef __unix__
 #define SU_THREAD_HANDLE pthread_t
 #define SU_THREAD_ID pthread_t
 #define SU_THREAD_NULL 0
 #define SU_THREAD_ROUTINE_TYPE(x) void *(*x)(void *)
 #define SU_THREAD_ROUTINE(x,y) void * x(void *y)
-#define SU_END_THREAD(x) pthread_exit((void *)(x))
+#define SU_END_THREAD(x) pthread_exit(&(x))
 #define SU_THREAD_RETURN(x) return (void *)(x);
 #define SU_PROCESS_SELF (SU_u32)getpid()
 #define SU_THREAD_SELF (SU_THREAD_ID)pthread_self()
@@ -746,7 +747,7 @@ SKYUTILS_API extern SU_PList SW_Cookies; /* SU_PCookie */
 #define SU_THREAD_NULL 0
 #define SU_THREAD_ROUTINE_TYPE(x) unsigned (__stdcall *x)(void *)
 #define SU_THREAD_ROUTINE(x,y) unsigned __stdcall x(void *y)
-#define SU_END_THREAD(x) _endthreadex((unsigned)(x))
+#define SU_END_THREAD(x) _endthreadex((x))
 #define SU_THREAD_RETURN(x) return (unsigned)(x);
 #define SU_PROCESS_SELF (SU_u32)GetCurrentProcessId()
 #define SU_THREAD_SELF (SU_THREAD_ID)GetCurrentThreadId()

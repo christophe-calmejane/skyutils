@@ -101,14 +101,15 @@ SKYUTILS_API int SU_snprintf(char *dest,size_t len, const char *format,...) /* l
   return (int)new_len;
 }
 
-SKYUTILS_API char *SU_nocasestrstr(char *text, char *tofind)  /* like strstr(), but nocase */
+SKYUTILS_API char *SU_nocasestrstr(char *text, const char *tofind)  /* like strstr(), but nocase */
 {
-   char *ret = text, *find = tofind;
+   char *ret = text;
+   const char *find = tofind;
 
    while(1)
    {
-      if(*find == 0) return ret;
-      if(*text == 0) return 0;
+      if(*find == '\0') return ret;
+      if(*text == '\0') return NULL;
       if(toupper(*find) != toupper(*text))
       {
         ret = text+1;
@@ -119,6 +120,7 @@ SKYUTILS_API char *SU_nocasestrstr(char *text, char *tofind)  /* like strstr(), 
         find++;
       text++;
    }
+   return NULL;
 }
 
 SKYUTILS_API bool SU_strwcmp(const char *s,const char *wild) /* True if wild equals s (wild may use '*') */
