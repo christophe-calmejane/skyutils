@@ -602,6 +602,25 @@ SKYUTILS_API int SU_atoi(const char *value)
     return atoi(value);
 }
 
+SKYUTILS_API const void* SU_memmem(const void* haystack, size_t haystacklen, const void* needle, size_t needlelen)
+{
+	size_t haystackpos = 0;
+	const void* ptr;
+
+	while((haystackpos+needlelen) <= haystacklen)
+	{
+		ptr = memchr(((char*)haystack)+haystackpos,*((char*)needle),haystacklen-haystackpos);
+		if(ptr != NULL) // Found the first byte of the needle
+		{
+			if(memcmp(ptr,needle,needlelen) == 0) // If comparison of the whole needle is OK, we've found it in our haystack!
+				return ptr;
+		}
+		haystackpos++;
+	}
+	return NULL; // Not found
+}
+
+
 #ifdef _WIN32
 static char _SU_w32ErrMsg[512];
 SKYUTILS_API char *SU_strerror(int ErrorCode)

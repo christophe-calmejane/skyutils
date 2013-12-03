@@ -28,7 +28,7 @@
 #endif /* FD_SETSIZE */
 #define FD_SETSIZE 256
 
-#define SKYUTILS_VERSION "4.01"
+#define SKYUTILS_VERSION "4.02"
 #define SKYUTILS_AUTHOR "Christophe Calméjane"
 
 #if defined(__MACH__) || defined(_AIX)
@@ -364,6 +364,7 @@ SKYUTILS_API bool SU_strcasecmp(const char *s,const char *p);
 SKYUTILS_API char *SU_strerror(int ErrorCode); /* Returns a static string which describes the error code (errno on linux, GetLastError on windows) */
 SKYUTILS_API int SU_htoi(const char *value); /* Like atoi() but with an HEX string as value */
 SKYUTILS_API int SU_atoi(const char *value); /* Like atoi() but if value starts with "0x", then value is interpreted as an HEX string */
+SKYUTILS_API const void* SU_memmem(const void* haystack, size_t haystacklen, const void* needle, size_t needlelen); /* Like strstr but with memory buffers */
 
 #ifdef _WIN32
 #ifdef __BORLANDC__
