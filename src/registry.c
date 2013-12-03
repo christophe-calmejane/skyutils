@@ -1,6 +1,6 @@
 /****************************************************************/
 /* Win32 registry functions                                     */
-/* (c) Christophe CALMEJANE (Ze KiLleR) - 1999-2011             */
+/* (c) Christophe CALMEJANE (Ze KiLleR) - 1999-2014             */
 /****************************************************************/
 
 /*
@@ -20,7 +20,7 @@
 */
 
 
-#include "skyutils.h"
+#include <skyutils/skyutils.h>
 static int SU_RB_LastError = SU_RB_ERR_SUCCESS;
 static int SU_RB_Access64Mode = 0;
 

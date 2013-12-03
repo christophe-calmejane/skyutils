@@ -1,6 +1,6 @@
 /****************************************************************/
 /* Archive unit                                                 */
-/* (c) Christophe CALMEJANE (Ze KiLleR) - 1999-2011             */
+/* (c) Christophe CALMEJANE (Ze KiLleR) - 1999-2014             */
 /****************************************************************/
 
 /*
@@ -35,7 +35,7 @@
 #else /* !_WIN32 */
 #include <utime.h>
 #endif /* _WIN32 */
-#include "skyutils.h"
+#include <skyutils/skyutils.h>
 #ifdef HAVE_ZLIB
 #include <zlib.h>
 #endif /* HAVE_ZLIB */

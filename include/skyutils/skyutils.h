@@ -1,6 +1,6 @@
 /******************************************************************************/
 /* Skyutils functions - Chained list,socket,string,utils,web,threads, archive */
-/* (c) Christophe CALMEJANE (Ze KiLleR) - 1999-2011                           */
+/* (c) Christophe CALMEJANE (Ze KiLleR) - 1999-2014                           */
 /******************************************************************************/
 
 /*
@@ -28,7 +28,7 @@
 #endif /* FD_SETSIZE */
 #define FD_SETSIZE 256
 
-#define SKYUTILS_VERSION "3.94"
+#define SKYUTILS_VERSION "4.01"
 #define SKYUTILS_AUTHOR "Christophe Calméjane"
 
 #if defined(__MACH__) || defined(_AIX)
@@ -1041,6 +1041,123 @@ SKYUTILS_API bool SU_DBG_ChooseDebugOptions_Windows(HINSTANCE hInstance,HWND Par
 #endif /* _WIN32 */
 
 
+/* **************************************** */
+/*              Buffer functions            */
+/* **************************************** */
+
+/**
+ *  @brief Namespace for SU_Buffer grow policy
+ */
+typedef enum
+{
+	kSU_Buffer_GrowPolicy_Double, /**< Double the size of the buffer when it needs reallocation (Default) */
+} SU_Buffer_GrowPolicy;
+
+/**
+ *  @brief SU_Buffer structure to handle growing buffers for serialization/deserialization
+ */
+typedef struct
+{
+	void* buffer;					/**< Memory buffer */
+	size_t size;					/**< Current max size of the buffer */
+	size_t pos;						/**< Position of next free byte in buffer */
+	SU_Buffer_GrowPolicy policy;	/**< Buffer grow policy */
+} SU_TBuffer,*SU_PBuffer;
+
+#define SU_BF_DEFAULT_POLICY kSU_Buffer_GrowPolicy_Double
+
+/**
+ *  @brief Allocates a SU_Buffer object.
+ *  @details This method is used to allocate a new SU_Buffer object without initializing it. Call the SU_BF_Init function to initialize it properly.
+ *  @return The newly allocated SU_Buffer object.
+ */
+SU_PBuffer SU_BF_Alloc(void);
+
+/**
+ *  @brief Allocates and initialize a SU_Buffer object.
+ *  @details This method is used to allocate a new SU_Buffer object and then initialize it.
+ *  @param [in] defaultSize Initial size of the growing buffer.
+ *  @param [in] policy Growing policy for the buffer.
+ *  @return The newly allocated and initialized SU_Buffer object.
+ */
+SU_PBuffer SU_BF_Create(size_t defaultSize,SU_Buffer_GrowPolicy policy);
+
+/**
+ *  @brief Initializes a SU_Buffer object.
+ *  @details This method is used to properly initialize a SU_Buffer object.
+ *  @param [in] buffer The SU_Buffer to initialize.
+ *  @param [in] defaultSize Initial size of the growing buffer.
+ *  @param [in] policy Growing policy for the buffer.
+ */
+void SU_BF_Init(SU_PBuffer buffer,size_t defaultSize,SU_Buffer_GrowPolicy policy);
+
+/**
+ *  @brief Frees a SU_Buffer object.
+ *  @details This method is used to fully free a SU_Buffer object. The passed buffer must be not accessed anymore nor passed to any SU_BF function after this function has been called.
+ *  @param [in] buffer The SU_Buffer to free.
+ */
+void SU_BF_Free(SU_PBuffer buffer);
+
+/**
+ *  @brief Wipes the data contained in the growing buffer.
+ *  @details This method is used to empty the data contained in the growing buffer. A new serialization/deserialization can begin after this call.
+ *  @param [in] buffer The SU_Buffer to be wiped.
+ */
+void SU_BF_Empty(SU_PBuffer buffer);
+
+/**
+ *  @brief Reserves bytes in the growing buffer.
+ *  @details This method is used to reserve bytes in the growing buffer to be written later. The reserved position is returned by the method and can be used later as a parameter to the SU_BF_WriteToReservedBytes method.
+ *  @param [in] buffer The SU_Buffer to reserve bytes in.
+ *  @param [in] len The number of bytes to reserve.
+ *  @return The position of the reserved bytes.
+ */
+size_t SU_BF_ReserveBytes(SU_PBuffer buffer,size_t len);
+
+/**
+ *  @brief Consumes bytes in the growing buffer.
+ *  @details This method is used to consume a number of bytes at the begining of the growing buffer. Those bytes are removed from the buffer and the remaining number of bytes in the buffer is returned by the method.
+ *  @param [in] buffer The SU_Buffer to consume data from.
+ *  @param [in] len The number of bytes at the begining of the buffer to consume.
+ *  @return The remaining number of bytes in the growing buffer.
+ */
+size_t SU_BF_ConsumeBufferLength(SU_PBuffer buffer,size_t len);
+
+/**
+ *  @brief Adds bytes in the growing buffer.
+ *  @details This method is used to write a number of bytes at the end of the growing buffer. If there is not enough room in the buffer to hold the bytes, it will be reallocated according to the configured policy.
+ *  @param [in] buffer The SU_Buffer to add bytes to.
+ *  @param [in] data The pointer to the data to add from.
+ *  @param [in] len The number of bytes to add.
+ */
+void SU_BF_AddToBuffer(SU_PBuffer buffer,void* data,size_t len);
+
+/**
+ *  @brief Writes bytes to a previously reserved area.
+ *  @details This method is used to write a number of bytes to a previously reserved area in the growing buffer. Use the SU_BF_ReserveBytes method to reserve an area in the buffer and to get its position.
+ *  @param [in] buffer The SU_Buffer to write bytes to.
+ *  @param [in] position The previously reserved area position.
+ *  @param [in] data The pointer to the data to write from.
+ *  @param [in] len The number of bytes to write.
+ */
+void SU_BF_WriteToReservedBytes(SU_PBuffer buffer,size_t position,void* data,size_t len);
+
+/**
+ *  @brief Gets a read-only pointer to the growing buffer data.
+ *  @details This method is used to retrieve a read-only pointer to the whole growing buffer data.
+ *  @param [in] buffer The SU_Buffer to get a pointer from.
+ *  @return The pointer to the data.
+ */
+const void* SU_BF_GetBufferData(SU_PBuffer buffer);
+
+/**
+ *  @brief Gets the number of bytes in the growing buffer data.
+ *  @details This method is used to retrieve the number of bytes in the whole growing buffer data.
+ *  @param [in] buffer The SU_Buffer to get the number of bytes from.
+ *  @return The number of bytes of data.
+ */
+size_t SU_BF_GetBufferLength(SU_PBuffer buffer);
+
 
 /* **************************************** */
 /*              MISC   functions            */
@@ -1048,7 +1165,7 @@ SKYUTILS_API bool SU_DBG_ChooseDebugOptions_Windows(HINSTANCE hInstance,HWND Par
 
 /* Dummy functions used by configure, to check correct version of skyutils */
 /* Remove old ones if compatibility has been broken */
-SKYUTILS_API void SU_Dummy303(void);
+SKYUTILS_API void SU_Dummy401(void);
 
 
 #if defined(__cplusplus)/* && !defined(__BORLANDC__)*/

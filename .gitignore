@@ -8,6 +8,8 @@
 *.ncb
 *.suo
 *.vcproj.*.user
+*.sdf
+*.opensdf
 
 /examples/*.exe
 /examples/*.obj

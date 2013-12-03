@@ -1,6 +1,6 @@
 /****************************************************************/
 /* Chained list unit                                            */
-/* (c) Christophe CALMEJANE (Ze KiLleR) - 1999-2011             */
+/* (c) Christophe CALMEJANE (Ze KiLleR) - 1999-2014             */
 /****************************************************************/
 
 /*
@@ -23,7 +23,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "skyutils.h"
+#include <skyutils/skyutils.h>
 
 #ifndef SU_TRACE_INTERNAL
 #ifdef SU_MALLOC_TRACE

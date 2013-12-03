@@ -1,6 +1,6 @@
 /****************************************************************/
 /* Utils unit                                                   */
-/* (c) Christophe CALMEJANE (Ze KiLleR) - 1999-2011             */
+/* (c) Christophe CALMEJANE (Ze KiLleR) - 1999-2014             */
 /****************************************************************/
 
 /*
@@ -20,7 +20,7 @@
 */
 
 
-#include "skyutils.h"
+#include <skyutils/skyutils.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>

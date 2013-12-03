@@ -1,6 +1,6 @@
 /****************************************************************/
 /* Threads unit                                                 */
-/* (c) Christophe CALMEJANE (Ze KiLleR) - 1999-2011             */
+/* (c) Christophe CALMEJANE (Ze KiLleR) - 1999-2014             */
 /****************************************************************/
 
 /*
@@ -20,7 +20,7 @@
 */
 
 
-#include "skyutils.h"
+#include <skyutils/skyutils.h>
 
 #ifdef _WIN32
 #pragma warning( disable: 4100)

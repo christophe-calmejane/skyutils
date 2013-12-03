@@ -1,6 +1,6 @@
 /****************************************************************/
 /* Debug header unit                                            */
-/* (c) Christophe CALMEJANE (Ze KiLleR) - 1999-2011             */
+/* (c) Christophe CALMEJANE (Ze KiLleR) - 1999-2014             */
 /****************************************************************/
 
 /*
@@ -22,7 +22,7 @@
 #ifndef __DEBUG_H__
 #define __DEBUG_H__
 
-#include "skyutils.h"
+#include <skyutils/skyutils.h>
 
 #define SU_DBG_MAX_SOCKETS 4 /* Don't forget to change initialisation of SU_DBG_OUT_SOCKET_Socks array */
 typedef struct
