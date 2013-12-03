@@ -1058,8 +1058,7 @@ typedef size_t (SU_BF_REQUEST_NEW_BUFFER_SIZE)(size_t currentSize,size_t request
  *  @brief SU_Buffer structure to handle growing buffers for serialization/deserialization
  */
 struct SU_SBuffer;
-typedef struct SU_SBuffer SU_TBuffer;
-typedef SU_TBuffer* SU_PBuffer;
+typedef struct SU_SBuffer* SU_PBuffer;
 
 /**
  *  @brief Allocates a SU_Buffer object.
