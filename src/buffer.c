@@ -21,17 +21,33 @@
 
 #include <skyutils/skyutils.h>
 
+/**
+ *  @brief SU_Buffer structure to handle growing buffers for serialization/deserialization
+ */
+struct SU_SBuffer
+{
+	void* buffer;											/**< Memory buffer */
+	size_t size;											/**< Current max size of the buffer */
+	size_t pos;												/**< Position of next free byte in buffer */
+	SU_BF_REQUEST_NEW_BUFFER_SIZE* requestNewBufferSize;	/**< Delegate method to request new buffer size when resizing is required */
+};
+
+
+
 /* Internal functions */
 
-static void SU_BF_Realloc(SU_PBuffer buffer)
+static void SU_BF_Realloc(SU_PBuffer buffer,size_t requested)
 {
-	switch(buffer->policy)
+	size_t newSize = buffer->size * 2;
+
+	if(buffer->requestNewBufferSize != NULL)
 	{
-		case kSU_Buffer_GrowPolicy_Double:
-			buffer->size *= 2;
-			buffer->buffer = realloc(buffer->buffer,buffer->size);
-			break;
+		newSize = buffer->requestNewBufferSize(buffer->size,requested);
+		if(newSize < requested)
+			newSize = requested;
 	}
+	buffer->size = newSize;
+	buffer->buffer = realloc(buffer->buffer,buffer->size);
 }
 
 
@@ -44,21 +60,21 @@ SU_PBuffer SU_BF_Alloc(void)
 	return buffer;
 }
 
-SU_PBuffer SU_BF_Create(size_t defaultSize,SU_Buffer_GrowPolicy policy)
+SU_PBuffer SU_BF_Create(size_t defaultSize,SU_BF_REQUEST_NEW_BUFFER_SIZE* requestNewBufferSize)
 {
 	SU_PBuffer buffer = SU_BF_Alloc();
-	SU_BF_Init(buffer,defaultSize,policy);
+	SU_BF_Init(buffer,defaultSize,requestNewBufferSize);
 	return buffer;
 }
 
-void SU_BF_Init(SU_PBuffer buffer,size_t defaultSize,SU_Buffer_GrowPolicy policy)
+void SU_BF_Init(SU_PBuffer buffer,size_t defaultSize,SU_BF_REQUEST_NEW_BUFFER_SIZE* requestNewBufferSize)
 {
 	buffer->size = defaultSize;
 	if(buffer->buffer != NULL)
 		free(buffer->buffer);
 	buffer->buffer = malloc(buffer->size);
 	buffer->pos = 0;
-	buffer->policy = policy;
+	buffer->requestNewBufferSize = requestNewBufferSize;
 }
 
 void SU_BF_Free(SU_PBuffer buffer)
@@ -80,7 +96,7 @@ size_t SU_BF_ReserveBytes(SU_PBuffer buffer,size_t len)
 	// Check for enough room
 	while((buffer->pos+len) > buffer->size)
 	{
-		SU_BF_Realloc(buffer);
+		SU_BF_Realloc(buffer,buffer->pos+len);
 	}
 
 	// Copy data
@@ -112,7 +128,7 @@ void SU_BF_AddToBuffer(SU_PBuffer buffer,void* data,size_t len)
 	// Check for enough room
 	while((buffer->pos+len) > buffer->size)
 	{
-		SU_BF_Realloc(buffer);
+		SU_BF_Realloc(buffer,buffer->pos+len);
 	}
 
 	// Copy data
@@ -135,4 +151,3 @@ size_t SU_BF_GetBufferLength(SU_PBuffer buffer)
 {
 	return buffer->pos;
 }
-

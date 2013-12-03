@@ -1046,29 +1046,24 @@ SKYUTILS_API bool SU_DBG_ChooseDebugOptions_Windows(HINSTANCE hInstance,HWND Par
 /* **************************************** */
 
 /**
- *  @brief Namespace for SU_Buffer grow policy
+ *  @brief Delegate method to ask for new buffer size.
+ *  @details This delegate method is called when the growing buffer needs to be resize, asking for the new size it should be allocated to.
+ *  @param [in] currentSize Current buffer size.
+ *  @param [in] requestSize Minimum requested new size.
+ *  @return The new size the buffer should be resized to.
  */
-typedef enum
-{
-	kSU_Buffer_GrowPolicy_Double, /**< Double the size of the buffer when it needs reallocation (Default) */
-} SU_Buffer_GrowPolicy;
+typedef size_t (SU_BF_REQUEST_NEW_BUFFER_SIZE)(size_t currentSize,size_t requestedSize);
 
 /**
  *  @brief SU_Buffer structure to handle growing buffers for serialization/deserialization
  */
-typedef struct
-{
-	void* buffer;					/**< Memory buffer */
-	size_t size;					/**< Current max size of the buffer */
-	size_t pos;						/**< Position of next free byte in buffer */
-	SU_Buffer_GrowPolicy policy;	/**< Buffer grow policy */
-} SU_TBuffer,*SU_PBuffer;
-
-#define SU_BF_DEFAULT_POLICY kSU_Buffer_GrowPolicy_Double
+struct SU_SBuffer;
+typedef struct SU_SBuffer SU_TBuffer;
+typedef SU_TBuffer* SU_PBuffer;
 
 /**
  *  @brief Allocates a SU_Buffer object.
- *  @details This method is used to allocate a new SU_Buffer object without initializing it. Call the SU_BF_Init function to initialize it properly.
+ *  @details This method is used to allocate a new SU_Buffer object without initializing it. Call the @link SU_BF_Init @endlink function to initialize it properly.
  *  @return The newly allocated SU_Buffer object.
  */
 SU_PBuffer SU_BF_Alloc(void);
@@ -1077,19 +1072,19 @@ SU_PBuffer SU_BF_Alloc(void);
  *  @brief Allocates and initialize a SU_Buffer object.
  *  @details This method is used to allocate a new SU_Buffer object and then initialize it.
  *  @param [in] defaultSize Initial size of the growing buffer.
- *  @param [in] policy Growing policy for the buffer.
+ *  @param [in] requestNewBufferSize Delegate method to be called when the buffer needs resizing. Default resizing policy will be used if NULL is specified.
  *  @return The newly allocated and initialized SU_Buffer object.
  */
-SU_PBuffer SU_BF_Create(size_t defaultSize,SU_Buffer_GrowPolicy policy);
+SU_PBuffer SU_BF_Create(size_t defaultSize,SU_BF_REQUEST_NEW_BUFFER_SIZE* requestNewBufferSize);
 
 /**
  *  @brief Initializes a SU_Buffer object.
  *  @details This method is used to properly initialize a SU_Buffer object.
  *  @param [in] buffer The SU_Buffer to initialize.
  *  @param [in] defaultSize Initial size of the growing buffer.
- *  @param [in] policy Growing policy for the buffer.
+ *  @param [in] requestNewBufferSize Delegate method to be called when the buffer needs resizing. Default resizing policy will be used if NULL is specified.
  */
-void SU_BF_Init(SU_PBuffer buffer,size_t defaultSize,SU_Buffer_GrowPolicy policy);
+void SU_BF_Init(SU_PBuffer buffer,size_t defaultSize,SU_BF_REQUEST_NEW_BUFFER_SIZE* requestNewBufferSize);
 
 /**
  *  @brief Frees a SU_Buffer object.
@@ -1107,10 +1102,11 @@ void SU_BF_Empty(SU_PBuffer buffer);
 
 /**
  *  @brief Reserves bytes in the growing buffer.
- *  @details This method is used to reserve bytes in the growing buffer to be written later. The reserved position is returned by the method and can be used later as a parameter to the SU_BF_WriteToReservedBytes method.
+ *  @details This method is used to reserve bytes in the growing buffer to be written later. The reserved position is returned by the method and can be used later as a parameter to the @link SU_BF_WriteToReservedBytes @endlink method.
  *  @param [in] buffer The SU_Buffer to reserve bytes in.
  *  @param [in] len The number of bytes to reserve.
  *  @return The position of the reserved bytes.
+ *  @note The returned position value becomes invalid if @link SU_BF_ConsumeBufferLength @endlink is called before using it in a call to @link SU_BF_WriteToReservedBytes @endlink.
  */
 size_t SU_BF_ReserveBytes(SU_PBuffer buffer,size_t len);
 
@@ -1134,7 +1130,7 @@ void SU_BF_AddToBuffer(SU_PBuffer buffer,void* data,size_t len);
 
 /**
  *  @brief Writes bytes to a previously reserved area.
- *  @details This method is used to write a number of bytes to a previously reserved area in the growing buffer. Use the SU_BF_ReserveBytes method to reserve an area in the buffer and to get its position.
+ *  @details This method is used to write a number of bytes to a previously reserved area in the growing buffer. Use the @link SU_BF_ReserveBytes @endlink method to reserve an area in the buffer and to get its position.
  *  @param [in] buffer The SU_Buffer to write bytes to.
  *  @param [in] position The previously reserved area position.
  *  @param [in] data The pointer to the data to write from.

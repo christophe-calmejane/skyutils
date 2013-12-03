@@ -4,6 +4,13 @@
 */
 
 #include <skyutils/skyutils.h>
+size_t SU_BF_GetBufferAllocatedSize(SU_PBuffer buffer);
+
+static size_t requestNewBufferSize(size_t currentSize,size_t requestedSize)
+{
+	printf("Reallocation required to hold %d bytes (current allocated size is %d)\n",requestedSize,currentSize);
+	return currentSize*2; // Same as default policy
+}
 
 int main(int argc, char *argv[])
 {
@@ -12,7 +19,7 @@ int main(int argc, char *argv[])
 	char ch = 0;
 	size_t remaining;
 	
-	buffer = SU_BF_Create(5,SU_BF_DEFAULT_POLICY);
+	buffer = SU_BF_Create(5,requestNewBufferSize);
 
 	SU_BF_AddToBuffer(buffer,"Hello",strlen("Hello"));
 	reserved = SU_BF_ReserveBytes(buffer,1);
