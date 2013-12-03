@@ -55,8 +55,8 @@ static void SU_BF_Realloc(SU_PBuffer buffer,size_t requested)
 
 SU_PBuffer SU_BF_Alloc(void)
 {
-	SU_PBuffer buffer = (SU_PBuffer) malloc(sizeof(SU_TBuffer));
-	memset(buffer,0,sizeof(SU_TBuffer));
+	SU_PBuffer buffer = (SU_PBuffer) malloc(sizeof(struct SU_SBuffer));
+	memset(buffer,0,sizeof(struct SU_SBuffer));
 	return buffer;
 }
 
