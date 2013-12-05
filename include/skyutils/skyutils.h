@@ -28,7 +28,7 @@
 #endif /* FD_SETSIZE */
 #define FD_SETSIZE 256
 
-#define SKYUTILS_VERSION "4.02"
+#define SKYUTILS_VERSION "4.03"
 #define SKYUTILS_AUTHOR "Christophe Calméjane"
 
 #if defined(__MACH__) || defined(_AIX)
@@ -1066,7 +1066,7 @@ typedef struct SU_SBuffer* SU_PBuffer;
  *  @details This method is used to allocate a new SU_Buffer object without initializing it. Call the @link SU_BF_Init @endlink function to initialize it properly.
  *  @return The newly allocated SU_Buffer object.
  */
-SU_PBuffer SU_BF_Alloc(void);
+SKYUTILS_API SU_PBuffer SU_BF_Alloc(void);
 
 /**
  *  @brief Allocates and initialize a SU_Buffer object.
@@ -1075,7 +1075,7 @@ SU_PBuffer SU_BF_Alloc(void);
  *  @param [in] requestNewBufferSize Delegate method to be called when the buffer needs resizing. Default resizing policy will be used if NULL is specified.
  *  @return The newly allocated and initialized SU_Buffer object.
  */
-SU_PBuffer SU_BF_Create(size_t defaultSize,SU_BF_REQUEST_NEW_BUFFER_SIZE* requestNewBufferSize);
+SKYUTILS_API SU_PBuffer SU_BF_Create(size_t defaultSize,SU_BF_REQUEST_NEW_BUFFER_SIZE* requestNewBufferSize);
 
 /**
  *  @brief Initializes a SU_Buffer object.
@@ -1084,21 +1084,21 @@ SU_PBuffer SU_BF_Create(size_t defaultSize,SU_BF_REQUEST_NEW_BUFFER_SIZE* reques
  *  @param [in] defaultSize Initial size of the growing buffer.
  *  @param [in] requestNewBufferSize Delegate method to be called when the buffer needs resizing. Default resizing policy will be used if NULL is specified.
  */
-void SU_BF_Init(SU_PBuffer buffer,size_t defaultSize,SU_BF_REQUEST_NEW_BUFFER_SIZE* requestNewBufferSize);
+SKYUTILS_API void SU_BF_Init(SU_PBuffer buffer,size_t defaultSize,SU_BF_REQUEST_NEW_BUFFER_SIZE* requestNewBufferSize);
 
 /**
  *  @brief Frees a SU_Buffer object.
  *  @details This method is used to fully free a SU_Buffer object. The passed buffer must be not accessed anymore nor passed to any SU_BF function after this function has been called.
  *  @param [in] buffer The SU_Buffer to free.
  */
-void SU_BF_Free(SU_PBuffer buffer);
+SKYUTILS_API void SU_BF_Free(SU_PBuffer buffer);
 
 /**
  *  @brief Wipes the data contained in the growing buffer.
  *  @details This method is used to empty the data contained in the growing buffer. A new serialization/deserialization can begin after this call.
  *  @param [in] buffer The SU_Buffer to be wiped.
  */
-void SU_BF_Empty(SU_PBuffer buffer);
+SKYUTILS_API void SU_BF_Empty(SU_PBuffer buffer);
 
 /**
  *  @brief Reserves bytes in the growing buffer.
@@ -1108,7 +1108,7 @@ void SU_BF_Empty(SU_PBuffer buffer);
  *  @return The position of the reserved bytes.
  *  @note The returned position value becomes invalid if @link SU_BF_ConsumeBufferLength @endlink is called before using it in a call to @link SU_BF_WriteToReservedBytes @endlink.
  */
-size_t SU_BF_ReserveBytes(SU_PBuffer buffer,size_t len);
+SKYUTILS_API size_t SU_BF_ReserveBytes(SU_PBuffer buffer,size_t len);
 
 /**
  *  @brief Consumes bytes in the growing buffer.
@@ -1117,7 +1117,7 @@ size_t SU_BF_ReserveBytes(SU_PBuffer buffer,size_t len);
  *  @param [in] len The number of bytes at the begining of the buffer to consume.
  *  @return The remaining number of bytes in the growing buffer.
  */
-size_t SU_BF_ConsumeBufferLength(SU_PBuffer buffer,size_t len);
+SKYUTILS_API size_t SU_BF_ConsumeBufferLength(SU_PBuffer buffer,size_t len);
 
 /**
  *  @brief Adds bytes in the growing buffer.
@@ -1126,7 +1126,7 @@ size_t SU_BF_ConsumeBufferLength(SU_PBuffer buffer,size_t len);
  *  @param [in] data The pointer to the data to add from.
  *  @param [in] len The number of bytes to add.
  */
-void SU_BF_AddToBuffer(SU_PBuffer buffer,void* data,size_t len);
+SKYUTILS_API void SU_BF_AddToBuffer(SU_PBuffer buffer,void* data,size_t len);
 
 /**
  *  @brief Writes bytes to a previously reserved area.
@@ -1136,7 +1136,7 @@ void SU_BF_AddToBuffer(SU_PBuffer buffer,void* data,size_t len);
  *  @param [in] data The pointer to the data to write from.
  *  @param [in] len The number of bytes to write.
  */
-void SU_BF_WriteToReservedBytes(SU_PBuffer buffer,size_t position,void* data,size_t len);
+SKYUTILS_API void SU_BF_WriteToReservedBytes(SU_PBuffer buffer,size_t position,void* data,size_t len);
 
 /**
  *  @brief Gets a read-only pointer to the growing buffer data.
@@ -1144,7 +1144,7 @@ void SU_BF_WriteToReservedBytes(SU_PBuffer buffer,size_t position,void* data,siz
  *  @param [in] buffer The SU_Buffer to get a pointer from.
  *  @return The pointer to the data.
  */
-const void* SU_BF_GetBufferData(SU_PBuffer buffer);
+SKYUTILS_API const void* SU_BF_GetBufferData(SU_PBuffer buffer);
 
 /**
  *  @brief Gets the number of bytes in the growing buffer data.
@@ -1152,7 +1152,22 @@ const void* SU_BF_GetBufferData(SU_PBuffer buffer);
  *  @param [in] buffer The SU_Buffer to get the number of bytes from.
  *  @return The number of bytes of data.
  */
-size_t SU_BF_GetBufferLength(SU_PBuffer buffer);
+SKYUTILS_API size_t SU_BF_GetBufferLength(SU_PBuffer buffer);
+
+/**
+ *  @brief Gets the current maximum size the growing buffer.
+ *  @details This method is used to retrieve the current maximum size of the growing buffer.
+ *  @param [in] buffer The SU_Buffer to get the maximum size from.
+ *  @return The maximum size of the buffer.
+ */
+SKYUTILS_API size_t SU_BF_GetAllocatedLength(SU_PBuffer buffer);
+
+/**
+ *  @brief Forces a resize of the growing buffer.
+ *  @details This method is used to force a reallocation of the growing buffer. If declared in @link @endlink, the @link SU_BF_REQUEST_NEW_BUFFER_SIZE @endling delegate method will be called.
+ *  @param [in] buffer The SU_Buffer to force a resize.
+ */
+SKYUTILS_API void SU_BF_ForceResize(SU_PBuffer buffer);
 
 
 /* **************************************** */

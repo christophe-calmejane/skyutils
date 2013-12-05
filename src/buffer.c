@@ -33,7 +33,6 @@ struct SU_SBuffer
 };
 
 
-
 /* Internal functions */
 
 static void SU_BF_Realloc(SU_PBuffer buffer,size_t requested)
@@ -53,21 +52,21 @@ static void SU_BF_Realloc(SU_PBuffer buffer,size_t requested)
 
 /* Exported API */
 
-SU_PBuffer SU_BF_Alloc(void)
+SKYUTILS_API SU_PBuffer SU_BF_Alloc(void)
 {
 	SU_PBuffer buffer = (SU_PBuffer) malloc(sizeof(struct SU_SBuffer));
 	memset(buffer,0,sizeof(struct SU_SBuffer));
 	return buffer;
 }
 
-SU_PBuffer SU_BF_Create(size_t defaultSize,SU_BF_REQUEST_NEW_BUFFER_SIZE* requestNewBufferSize)
+SKYUTILS_API SU_PBuffer SU_BF_Create(size_t defaultSize,SU_BF_REQUEST_NEW_BUFFER_SIZE* requestNewBufferSize)
 {
 	SU_PBuffer buffer = SU_BF_Alloc();
 	SU_BF_Init(buffer,defaultSize,requestNewBufferSize);
 	return buffer;
 }
 
-void SU_BF_Init(SU_PBuffer buffer,size_t defaultSize,SU_BF_REQUEST_NEW_BUFFER_SIZE* requestNewBufferSize)
+SKYUTILS_API void SU_BF_Init(SU_PBuffer buffer,size_t defaultSize,SU_BF_REQUEST_NEW_BUFFER_SIZE* requestNewBufferSize)
 {
 	buffer->size = defaultSize;
 	if(buffer->buffer != NULL)
@@ -77,19 +76,19 @@ void SU_BF_Init(SU_PBuffer buffer,size_t defaultSize,SU_BF_REQUEST_NEW_BUFFER_SI
 	buffer->requestNewBufferSize = requestNewBufferSize;
 }
 
-void SU_BF_Free(SU_PBuffer buffer)
+SKYUTILS_API void SU_BF_Free(SU_PBuffer buffer)
 {
 	if(buffer->buffer != NULL)
 		free(buffer->buffer);
 	free(buffer);
 }
 
-void SU_BF_Empty(SU_PBuffer buffer)
+SKYUTILS_API void SU_BF_Empty(SU_PBuffer buffer)
 {
 	buffer->pos = 0;
 }
 
-size_t SU_BF_ReserveBytes(SU_PBuffer buffer,size_t len)
+SKYUTILS_API size_t SU_BF_ReserveBytes(SU_PBuffer buffer,size_t len)
 {
 	size_t pos = buffer->pos;
 
@@ -106,7 +105,7 @@ size_t SU_BF_ReserveBytes(SU_PBuffer buffer,size_t len)
 	return pos;
 }
 
-size_t SU_BF_ConsumeBufferLength(SU_PBuffer buffer,size_t len)
+SKYUTILS_API size_t SU_BF_ConsumeBufferLength(SU_PBuffer buffer,size_t len)
 {
 	// Sanity check
 	if(len > buffer->pos)
@@ -123,7 +122,7 @@ size_t SU_BF_ConsumeBufferLength(SU_PBuffer buffer,size_t len)
 	return buffer->pos;
 }
 
-void SU_BF_AddToBuffer(SU_PBuffer buffer,void* data,size_t len)
+SKYUTILS_API void SU_BF_AddToBuffer(SU_PBuffer buffer,void* data,size_t len)
 {
 	// Check for enough room
 	while((buffer->pos+len) > buffer->size)
@@ -136,18 +135,28 @@ void SU_BF_AddToBuffer(SU_PBuffer buffer,void* data,size_t len)
 	buffer->pos += len;
 }
 
-void SU_BF_WriteToReservedBytes(SU_PBuffer buffer,size_t position,void* data,size_t len)
+SKYUTILS_API void SU_BF_WriteToReservedBytes(SU_PBuffer buffer,size_t position,void* data,size_t len)
 {
 	// Copy data
 	memcpy((char*)(buffer->buffer)+position,data,len);
 }
 
-const void* SU_BF_GetBufferData(SU_PBuffer buffer)
+SKYUTILS_API const void* SU_BF_GetBufferData(SU_PBuffer buffer)
 {
 	return buffer->buffer;
 }
 
-size_t SU_BF_GetBufferLength(SU_PBuffer buffer)
+SKYUTILS_API size_t SU_BF_GetBufferLength(SU_PBuffer buffer)
 {
 	return buffer->pos;
+}
+
+SKYUTILS_API size_t SU_BF_GetAllocatedLength(SU_PBuffer buffer)
+{
+	return buffer->size;
+}
+
+SKYUTILS_API void SU_BF_ForceResize(SU_PBuffer buffer)
+{
+	SU_BF_Realloc(buffer,buffer->size);
 }
