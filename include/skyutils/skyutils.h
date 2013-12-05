@@ -1164,7 +1164,7 @@ SKYUTILS_API size_t SU_BF_GetAllocatedLength(SU_PBuffer buffer);
 
 /**
  *  @brief Forces a resize of the growing buffer.
- *  @details This method is used to force a reallocation of the growing buffer. If declared in @link @endlink, the @link SU_BF_REQUEST_NEW_BUFFER_SIZE @endling delegate method will be called.
+ *  @details This method is used to force a reallocation of the growing buffer. If declared in @link SU_BF_Create @endlink or @link SU_BF_Init @endlink, the @link SU_BF_REQUEST_NEW_BUFFER_SIZE @endling delegate method will be called.
  *  @param [in] buffer The SU_Buffer to force a resize.
  */
 SKYUTILS_API void SU_BF_ForceResize(SU_PBuffer buffer);
