@@ -1,12 +1,12 @@
 /* Compilation command line
-    cl ExtractArchive.c -I../src -DSU_USE_ARCH -c
+    cl ExtractArchive.c -I../include -DSU_USE_ARCH -c
     link ExtractArchive.obj ../src/windows/skyutils/debug/skyutils.lib /nodefaultlib:libcmtd
 */
 
 #ifndef SU_USE_ARCH
 #error "SU_USE_ARCH not defined ! Must enable it to compile this file"
 #endif /* !SU_USE_ARCH */
-#include <skyutils.h>
+#include <skyutils/skyutils.h>
 
 #define EA_VERSION "1.0"
 #define EA_NAME "ExtractArchive"

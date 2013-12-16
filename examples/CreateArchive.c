@@ -1,12 +1,12 @@
 /* Compilation command line
-    cl CreateArchive.c -I../src -DSU_USE_ARCH -c
+    cl CreateArchive.c -I../include -DSU_USE_ARCH -c
     link CreateArchive.obj ../src/windows/skyutils/debug/skyutils.lib /nodefaultlib:libcmtd
 */
 
 #ifndef SU_USE_ARCH
 #error "SU_USE_ARCH not defined ! Must enable it to compile this file"
 #endif /* !SU_USE_ARCH */
-#include <skyutils.h>
+#include <skyutils/skyutils.h>
 
 #define AA_VERSION "1.1"
 #define AA_NAME "CreateArchive"

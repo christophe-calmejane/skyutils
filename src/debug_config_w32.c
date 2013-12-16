@@ -22,7 +22,7 @@
 #ifdef _WIN32
 
 #include "debug.h"
-#include "Windows\\Skyutils\\su_resource.h"
+#include <skyutils/su_resource.h>
 
 #ifdef _WIN32
 #pragma warning( disable: 4057 4100 4311)

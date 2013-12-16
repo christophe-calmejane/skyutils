@@ -1,12 +1,12 @@
 /* Compilation command line
-    cl TestArchive.c -I../src -DSU_USE_ARCH -c
+    cl TestArchive.c -I../include -DSU_USE_ARCH -c
     link TestArchive.obj ../src/windows/skyutils/debug/skyutils.lib /nodefaultlib:libcmtd
 */
 
 #ifndef SU_USE_ARCH
 #error "SU_USE_ARCH not defined ! Must enable it to compile this file"
 #endif /* !SU_USE_ARCH */
-#include <skyutils.h>
+#include <skyutils/skyutils.h>
 
 int main(int argc, char *argv[])
 {
