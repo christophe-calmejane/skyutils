@@ -28,7 +28,7 @@
 #endif /* FD_SETSIZE */
 #define FD_SETSIZE 256
 
-#define SKYUTILS_VERSION "4.03"
+#define SKYUTILS_VERSION "4.04"
 #define SKYUTILS_AUTHOR "Christophe Calméjane"
 
 #if defined(__MACH__) || defined(_AIX)
@@ -371,6 +371,7 @@ SKYUTILS_API const void* SU_memmem(const void* haystack, size_t haystacklen, con
 #define strcasecmp stricmp
 #define strncasecmp strnicmp
 #define SU_strdup(x) (((x)==NULL)?NULL:strdup(x))
+#define SU_strlen(x) (((x)==NULL)?0:strlen(x))
 #else /* !__BORLANDC__ */
 #define strcasecmp _stricmp
 #define strncasecmp _strnicmp
@@ -380,9 +381,11 @@ SKYUTILS_API const void* SU_memmem(const void* haystack, size_t haystacklen, con
 #define unlink _unlink
 #define strdup _strdup
 #define SU_strdup(x) (((x)==NULL)?NULL:_strdup(x))
+#define SU_strlen(x) (((x)==NULL)?0:strlen(x))
 #endif /* __BORLANDC__ */
 #else /* !_WIN32 */
 #define SU_strdup(x) (((x)==NULL)?NULL:strdup(x))
+#define SU_strlen(x) (((x)==NULL)?0:strlen(x))
 #endif /* _WIN32 */
 
 
