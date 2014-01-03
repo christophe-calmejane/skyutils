@@ -182,6 +182,35 @@ SKYUTILS_API int SU_SemTryWait(SU_SEM_HANDLE *sem)
 #endif /* _WIN32 */
 }
 
+/* Wait for a semaphore for a maximum of 'msec' milliseconds - Returns 0 if sem was available and has been taken, -1 if timed out */
+SKYUTILS_API int SU_SemWaitTimeout(SU_SEM_HANDLE *sem,unsigned int msec)
+{
+#ifdef _WIN32
+  if(WaitForSingleObject(*sem,msec) == WAIT_OBJECT_0)
+    return 0; /* Sem has been taken */
+  return -1;
+#else /* !_WIN32 */
+	struct timeval now;
+	struct timespec to;
+	gettimeofday(&now,NULL);
+	// We stay in usec to prevent going over the size of an int on a 32bit computer
+	now.tv_usec += (msec * 1000);
+	if(now.tv_usec > 1000000)
+	{
+		now.tv_sec += now.tv_usec / 1000000;
+		now.tv_usec = now.tv_usec % 1000000;
+	}
+	to.tv_sec = now.tv_sec;
+	to.tv_nsec = now.tv_usec * 1000;
+  while(sem_timedwait(sem,&to) == -1)
+  {
+    if(errno != EINTR) /* Only return from function if not EINTR */
+      return -1;
+  }
+  return 0;
+#endif /* _WIN32 */
+}
+
 /* Create a new mutex */
 SKYUTILS_API bool SU_CreateMutex(SU_MUTEX_HANDLE *Handle,const char MutexName[])
 {

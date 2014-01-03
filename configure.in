@@ -48,6 +48,7 @@ AM_MAINTAINER_MODE
 
 AM_PROG_LIBTOOL
 
+CFLAGS="$CFLAGS -I../include"
 if test "$GCC" = "yes"
 then
   CFLAGS="$CFLAGS -Wall"

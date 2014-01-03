@@ -28,7 +28,7 @@
 #endif /* FD_SETSIZE */
 #define FD_SETSIZE 256
 
-#define SKYUTILS_VERSION "4.04"
+#define SKYUTILS_VERSION "4.05"
 #define SKYUTILS_AUTHOR "Christophe Calméjane"
 
 #if defined(__MACH__) || defined(_AIX)
@@ -732,9 +732,7 @@ SKYUTILS_API extern SU_PList SW_Cookies; /* SU_PCookie */
 #define SU_SEM_WAIT(x) { while(sem_wait(&(x)) == -1) { if(errno != EINTR) break; } }
 #define SU_SEM_POST(x) sem_post(&(x))
 #define SU_SEM_TRY_AND_ENTER(x) (SU_SemTryWait(&(x)) == 0)
-/*
-#define SU_SEM_WAIT_TIMEOUT(x,to) sem_timedwait(&(x),TODO)
-*/
+#define SU_SEM_WAIT_TIMEOUT(x,msec) (SU_SemWaitTimeout(&(x),msec) == 0)
 #define SU_MUTEX_HANDLE pthread_mutex_t
 #define SU_MUTEX_WAIT(x) pthread_mutex_lock(&(x))
 #define SU_MUTEX_POST(x) pthread_mutex_unlock(&(x))
@@ -765,7 +763,8 @@ SKYUTILS_API extern SU_PList SW_Cookies; /* SU_PCookie */
 #define SU_SEM_HANDLE HANDLE
 #define SU_SEM_WAIT(x) WaitForSingleObject(x,INFINITE)
 #define SU_SEM_POST(x) ReleaseSemaphore(x,1,NULL)
-#define SU_SEM_TRY_AND_ENTER(x) (WaitForSingleObject(x,0) == WAIT_OBJECT_0)
+#define SU_SEM_TRY_AND_ENTER(x) (SU_SemTryWait(&(x)) == 0)
+#define SU_SEM_WAIT_TIMEOUT(x,msec) (SU_SemWaitTimeout(&(x),msec) == 0)
 #define SU_MUTEX_HANDLE HANDLE
 #define SU_MUTEX_WAIT(x) WaitForSingleObject(x,INFINITE)
 #define SU_MUTEX_POST(x) ReleaseMutex(x)
@@ -807,6 +806,9 @@ SKYUTILS_API bool SU_FreeSem(SU_SEM_HANDLE *Handle);
 
 /* Try to lock a semaphore - Returns 0 if sem was available and has been taken, -1 otherwise (if it was already taken) */
 SKYUTILS_API int SU_SemTryWait(SU_SEM_HANDLE *sem);
+
+/* Wait for a semaphore for a maximum of 'msec' milliseconds - Returns 0 if sem was available and has been taken, -1 if timed out */
+SKYUTILS_API int SU_SemWaitTimeout(SU_SEM_HANDLE *sem,unsigned int msec);
 
 /* Create a new thread key */
 SKYUTILS_API bool SU_CreateThreadKey(SU_THREAD_KEY_HANDLE *Handle,SU_THREAD_ONCE_HANDLE *Once,void (*destroyts)(void *)); /* True on success */

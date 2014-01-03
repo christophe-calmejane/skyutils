@@ -3,6 +3,8 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2012
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "skyutils", "skyutils.vcxproj", "{0515AB99-B05C-4C10-8E0E-5E0EDD682FAF}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TestThread", "TestThread.vcxproj", "{F727C53D-E5D4-4E40-A6DF-6B353AACDFE2}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug DLL|Win32 = Debug DLL|Win32
@@ -31,6 +33,22 @@ Global
 		{0515AB99-B05C-4C10-8E0E-5E0EDD682FAF}.Release SSL|Win32.Build.0 = Release SSL|Win32
 		{0515AB99-B05C-4C10-8E0E-5E0EDD682FAF}.Release|Win32.ActiveCfg = Release|Win32
 		{0515AB99-B05C-4C10-8E0E-5E0EDD682FAF}.Release|Win32.Build.0 = Release|Win32
+		{F727C53D-E5D4-4E40-A6DF-6B353AACDFE2}.Debug DLL|Win32.ActiveCfg = Debug|Win32
+		{F727C53D-E5D4-4E40-A6DF-6B353AACDFE2}.Debug DLL|Win32.Build.0 = Debug|Win32
+		{F727C53D-E5D4-4E40-A6DF-6B353AACDFE2}.Debug SSL DLL|Win32.ActiveCfg = Debug|Win32
+		{F727C53D-E5D4-4E40-A6DF-6B353AACDFE2}.Debug SSL DLL|Win32.Build.0 = Debug|Win32
+		{F727C53D-E5D4-4E40-A6DF-6B353AACDFE2}.Debug SSL|Win32.ActiveCfg = Debug|Win32
+		{F727C53D-E5D4-4E40-A6DF-6B353AACDFE2}.Debug SSL|Win32.Build.0 = Debug|Win32
+		{F727C53D-E5D4-4E40-A6DF-6B353AACDFE2}.Debug|Win32.ActiveCfg = Debug|Win32
+		{F727C53D-E5D4-4E40-A6DF-6B353AACDFE2}.Debug|Win32.Build.0 = Debug|Win32
+		{F727C53D-E5D4-4E40-A6DF-6B353AACDFE2}.Release DLL|Win32.ActiveCfg = Release|Win32
+		{F727C53D-E5D4-4E40-A6DF-6B353AACDFE2}.Release DLL|Win32.Build.0 = Release|Win32
+		{F727C53D-E5D4-4E40-A6DF-6B353AACDFE2}.Release SSL DLL|Win32.ActiveCfg = Release|Win32
+		{F727C53D-E5D4-4E40-A6DF-6B353AACDFE2}.Release SSL DLL|Win32.Build.0 = Release|Win32
+		{F727C53D-E5D4-4E40-A6DF-6B353AACDFE2}.Release SSL|Win32.ActiveCfg = Release|Win32
+		{F727C53D-E5D4-4E40-A6DF-6B353AACDFE2}.Release SSL|Win32.Build.0 = Release|Win32
+		{F727C53D-E5D4-4E40-A6DF-6B353AACDFE2}.Release|Win32.ActiveCfg = Release|Win32
+		{F727C53D-E5D4-4E40-A6DF-6B353AACDFE2}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
