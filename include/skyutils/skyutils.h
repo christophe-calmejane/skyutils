@@ -28,7 +28,7 @@
 #endif /* FD_SETSIZE */
 #define FD_SETSIZE 256
 
-#define SKYUTILS_VERSION "4.07"
+#define SKYUTILS_VERSION "4.08"
 #define SKYUTILS_AUTHOR "Christophe Calméjane"
 
 #if defined(__MACH__) || defined(_AIX)
@@ -410,6 +410,7 @@ SKYUTILS_API bool SU_IsOS64(void); /* Returns true if the process is running on 
 SKYUTILS_API FILE *SU_OpenLogFile(const char LogName[]);
 SKYUTILS_API void SU_CloseLogFile(FILE *fp);
 SKYUTILS_API void SU_WriteToLogFile(FILE *fp,const char* Text,...);
+SKYUTILS_API void SU_WriteToLogFile_v(FILE *fp,const char* Text,va_list argptr);
 /* Checks the http_proxy env var */
 SKYUTILS_API void SU_CheckProxyEnv(void);
 

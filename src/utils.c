@@ -83,21 +83,28 @@ SKYUTILS_API void SU_CloseLogFile(FILE *fp)
 
 SKYUTILS_API void SU_WriteToLogFile(FILE *fp,const char* Text,...)
 {
-	struct tm *TM;
-	time_t Tim;
-
 	if(fp != NULL)
 	{
 		va_list argptr;
+		va_start(argptr,Text);
+		SU_WriteToLogFile_v(fp,Text,argptr);
+		va_end(argptr);
+	}
+}
+
+SKYUTILS_API void SU_WriteToLogFile_v(FILE *fp,const char* Text,va_list argptr)
+{
+	if(fp != NULL)
+	{
+		struct tm *TM;
+		time_t Tim;
 		char Str[4096];
 
-		va_start(argptr,Text);
 #ifdef _WIN32
 		_vsnprintf(Str,sizeof(Str),Text,argptr);
 #else /* !_WIN32 */
 		vsnprintf(Str,sizeof(Str),Text,argptr);
 #endif /* _WIN32 */
-		va_end(argptr);
 
 		Tim = time(NULL);
 		TM = localtime(&Tim);
