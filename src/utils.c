@@ -87,12 +87,28 @@ SKYUTILS_API void SU_WriteToLogFile(FILE *fp,const char* Text,...)
 	{
 		va_list argptr;
 		va_start(argptr,Text);
-		SU_WriteToLogFile_v(fp,Text,argptr);
+		SU_WriteToLogFileEOL_v(fp,true,Text,argptr);
+		va_end(argptr);
+	}
+}
+
+SKYUTILS_API void SU_WriteToLogFileEOL(FILE *fp,bool addEOL,const char* Text,...)
+{
+	if(fp != NULL)
+	{
+		va_list argptr;
+		va_start(argptr,Text);
+		SU_WriteToLogFileEOL_v(fp,addEOL,Text,argptr);
 		va_end(argptr);
 	}
 }
 
 SKYUTILS_API void SU_WriteToLogFile_v(FILE *fp,const char* Text,va_list argptr)
+{
+	SU_WriteToLogFileEOL_v(fp,true,Text,argptr);
+}
+
+SKYUTILS_API void SU_WriteToLogFileEOL_v(FILE *fp,bool addEOL,const char* Text,va_list argptr)
 {
 	if(fp != NULL)
 	{
@@ -108,7 +124,7 @@ SKYUTILS_API void SU_WriteToLogFile_v(FILE *fp,const char* Text,va_list argptr)
 
 		Tim = time(NULL);
 		TM = localtime(&Tim);
-		fprintf(fp,"[%.4d/%.2d/%.2d-%.2d:%.2d:%.2d] %s\n",TM->tm_year+1900,TM->tm_mon+1,TM->tm_mday,TM->tm_hour,TM->tm_min,TM->tm_sec,Str);
+		fprintf(fp,"[%.4d/%.2d/%.2d-%.2d:%.2d:%.2d] %s%s",TM->tm_year+1900,TM->tm_mon+1,TM->tm_mday,TM->tm_hour,TM->tm_min,TM->tm_sec,Str,addEOL?"\n":"");
 		fflush(fp);
 	}
 }
