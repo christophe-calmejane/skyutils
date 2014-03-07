@@ -3,7 +3,7 @@ SUBDIRS = Windows
 
 lib_LTLIBRARIES = libskyutils.la
 
-include_HEADERS = skyutils.h
+include_HEADERS = ../include/skyutils/skyutils.h
 
 libskyutils_la_SOURCES = \
 	liste.c  \
