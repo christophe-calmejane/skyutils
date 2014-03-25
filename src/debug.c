@@ -305,7 +305,6 @@ SKYUTILS_API void SU_DBG_OUT_FILE_SetOptions(const char FileName[],bool DeletePr
 SKYUTILS_API void SU_DBG_OUT_SOCKET_SetOptions(const char HostName[],const int Port)
 {
   int i;
-  char buf[100];
   SU_PClientSocket CS;
 
   if(!SU_DBG_SockInitDone)
@@ -322,11 +321,10 @@ SKYUTILS_API void SU_DBG_OUT_SOCKET_SetOptions(const char HostName[],const int P
   {
     if(SU_DBG_OUT_SOCKET_Socks[i] == SU_NOT_A_SOCKET)
     {
-      SU_snprintf(buf,sizeof(buf),"%d",Port);
-      CS = SU_ClientConnect((char *)HostName,buf,SOCK_STREAM);
+      CS = SU_ClientConnect((char *)HostName,Port,SOCK_STREAM);
       if(CS == NULL)
       {
-        printf("SU_DBG_OUT_SOCKET_SetOptions : Cannot connect to %s:%s\n",HostName,buf);
+        printf("SU_DBG_OUT_SOCKET_SetOptions : Cannot connect to %s:%d\n",HostName,Port);
         return;
       }
       SU_DBG_OUT_SOCKET_Socks[i] = CS->sock;

@@ -485,26 +485,29 @@ SKYUTILS_API void SU_ServerDisconnect(SU_PServerInfo SI)
 
 SKYUTILS_API void SU_FreeSI(SU_PServerInfo SI)
 {
-  SU_ServerDisconnect(SI);
-  free(SI);
+	if(SI != NULL)
+	{
+		SU_ServerDisconnect(SI);
+		free(SI);
+	}
 }
 
 /*------------------------------------------------------------*/
-SKYUTILS_API SU_PClientSocket SU_ClientConnect(char *adrs,char *port,int type)
+static SU_PClientSocket _SU_ClientConnect(char* adrs, char* protocol, int port, int type)
 {
-	struct servent *SE;
+	struct servent* SE = NULL;
 	struct sockaddr_in sin;
-	struct hostent *HE;
+	struct hostent* HE;
 	SU_PClientSocket CS;
-	
-	CS = (SU_PClientSocket) malloc(sizeof(SU_TClientSocket));
+
+	CS = (SU_PClientSocket)malloc(sizeof(SU_TClientSocket));
 	if(CS == NULL)
 		return NULL;
-	memset(CS,0,sizeof(SU_TClientSocket));
+	memset(CS, 0, sizeof(SU_TClientSocket));
 	if(type == SOCK_STREAM)
-		CS->sock = socket(AF_INET,SOCK_STREAM,getprotobyname("tcp")->p_proto);
+		CS->sock = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP); // getprotobyname("tcp")->p_proto);
 	else if(type == SOCK_DGRAM)
-		CS->sock = socket(AF_INET,SOCK_DGRAM,getprotobyname("udp")->p_proto);
+		CS->sock = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP); // getprotobyname("udp")->p_proto);
 	else
 	{
 		free(CS);
@@ -516,14 +519,17 @@ SKYUTILS_API SU_PClientSocket SU_ClientConnect(char *adrs,char *port,int type)
 		return NULL;
 	}
 	sin.sin_family = AF_INET;
-	if(type == SOCK_STREAM)
-		SE = getservbyname(port,"tcp");
-	else if(type == SOCK_DGRAM)
-		SE = getservbyname(port,"udp");
-	else
-		return NULL;
+	if(protocol != NULL)
+	{
+		if(type == SOCK_STREAM)
+			SE = getservbyname(protocol, "tcp");
+		else if(type == SOCK_DGRAM)
+			SE = getservbyname(protocol, "udp");
+		else
+			return NULL;
+	}
 	if(SE == NULL)
-		sin.sin_port = htons((unsigned short)atoi(port));
+		sin.sin_port = htons((unsigned short)port);
 	else
 		sin.sin_port = SE->s_port;
 	sin.sin_addr.s_addr = inet_addr(adrs);
@@ -532,14 +538,13 @@ SKYUTILS_API SU_PClientSocket SU_ClientConnect(char *adrs,char *port,int type)
 		HE = gethostbyname(adrs);
 		if(HE == NULL)
 		{
-			/*printf("SkyUtils_ClientConnect Warning: Unknown Host: %s\n",adrs);*/
 			SU_seterrno(ENXIO);
 			free(CS);
 			return NULL;
 		}
 		sin.sin_addr = *(struct in_addr *)(HE->h_addr_list[0]);
 	}
-	if(connect(CS->sock,(struct sockaddr *)(&sin),sizeof(sin)) == -1)
+	if(connect(CS->sock, (struct sockaddr *)(&sin), sizeof(sin)) == -1)
 	{
 		int err = SU_errno; /* We need to backup last error, because it will be overriden by the following SU_CLOSE_SOCKET call */
 		SU_CLOSE_SOCKET(CS->sock);
@@ -547,8 +552,18 @@ SKYUTILS_API SU_PClientSocket SU_ClientConnect(char *adrs,char *port,int type)
 		SU_seterrno(err); /* Restore last error */
 		return NULL;
 	}
-	memcpy(&CS->SAddr,&sin,sizeof(CS->SAddr));
+	memcpy(&CS->SAddr, &sin, sizeof(CS->SAddr));
 	return CS;
+}
+
+SKYUTILS_API SU_PClientSocket SU_ClientConnectWithProtocol(char* adrs, char* protocol, int type)
+{
+	return _SU_ClientConnect(adrs, protocol, atoi(protocol), type);
+}
+
+SKYUTILS_API SU_PClientSocket SU_ClientConnect(char* adrs, int port, int type)
+{
+	return _SU_ClientConnect(adrs, NULL, port, type);
 }
 
 SKYUTILS_API int SU_ClientSend(SU_PClientSocket CS,char *msg)
@@ -575,8 +590,11 @@ SKYUTILS_API void SU_ClientDisconnect(SU_PClientSocket CS)
 
 SKYUTILS_API void SU_FreeCS(SU_PClientSocket CS)
 {
-  SU_ClientDisconnect(CS);
-  free(CS);
+	if(CS != NULL)
+	{
+		SU_ClientDisconnect(CS);
+		free(CS);
+	}
 }
 
 /*------------------------------------------------------------*/

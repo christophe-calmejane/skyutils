@@ -477,7 +477,31 @@ SKYUTILS_API char *SU_strparse(char *s,char delim)
   return ret;
 }
 
- /* Extracts file name (with suffix) from path */
+SKYUTILS_API char *SU_strparse_r(char* s, char delim, char** savedptr)
+{
+	char *p, *ret;
+
+	if(s != NULL)
+		(*savedptr) = s;
+	if((*savedptr) == NULL)
+		return NULL;
+	if((*savedptr)[0] == delim)
+	{
+		(*savedptr)++;
+		return SU_ZeroString;
+	}
+	p = strchr((*savedptr), delim);
+	ret = (*savedptr);
+	(*savedptr) = p;
+	if(p != NULL)
+	{
+		p[0] = 0;
+		(*savedptr)++;
+	}
+	return ret;
+}
+
+/* Extracts file name (with suffix) from path */
 SKYUTILS_API void SU_ExtractFileName(const char Path[],char FileName[],const int len)
 {
   char *pos;

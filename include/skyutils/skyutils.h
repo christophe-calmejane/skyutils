@@ -28,7 +28,7 @@
 #endif /* FD_SETSIZE */
 #define FD_SETSIZE 256
 
-#define SKYUTILS_VERSION "4.09"
+#define SKYUTILS_VERSION "4.10"
 #define SKYUTILS_AUTHOR "Christophe Calméjane"
 
 #if defined(__MACH__) || defined(_AIX)
@@ -299,7 +299,8 @@ SKYUTILS_API SU_PClientSocket SU_ServerAcceptConnection(SU_PServerInfo SI);     
 SKYUTILS_API int SU_ServerAcceptConnectionWithTimeout(SU_PServerInfo SI,struct timeval *TimeOut,SU_PClientSocket *NewSon); /* Returns -1 on error, 0 on timeout, 1 if son accepted */
 SKYUTILS_API void SU_ServerDisconnect(SU_PServerInfo SI);
 SKYUTILS_API void SU_FreeSI(SU_PServerInfo SI); /* Disconnect and free SI */
-SKYUTILS_API SU_PClientSocket SU_ClientConnect(char *adrs,char *port,int type); /* Returns NULL on error */
+SKYUTILS_API SU_PClientSocket SU_ClientConnect(char* adrs, int port, int type); /* Returns NULL on error */
+SKYUTILS_API SU_PClientSocket SU_ClientConnectWithProtocol(char* adrs, char* protocol, int type); /* Returns NULL on error */
 SKYUTILS_API int SU_ClientSend(SU_PClientSocket CS,char *msg);                  /* SOCKET_ERROR on Error */
 SKYUTILS_API int SU_ClientSendBuf(SU_PClientSocket CS,char *buf,int len);       /* SOCKET_ERROR on Error */
 SKYUTILS_API void SU_ClientDisconnect(SU_PClientSocket CS);
@@ -353,7 +354,8 @@ SKYUTILS_API bool SU_ReadLine(FILE *fp,char S[],int len); /* Returns false on EO
 SKYUTILS_API bool SU_ParseConfig(FILE *fp,char Name[],int nsize,char Value[],int vsize); /* Returns false on EOF */
 SKYUTILS_API char *SU_TrimLeft(const char *S);
 SKYUTILS_API void SU_TrimRight(char *S);
-SKYUTILS_API char *SU_strparse(char *s,char delim); /* Like strtok, but if 2 consecutive delim are found, an empty string is returned (s[0] = 0) */
+SKYUTILS_API char *SU_strparse(char *s, char delim); /* Like strtok, but if 2 consecutive delim are found, an empty string is returned (s[0] = 0) */
+SKYUTILS_API char *SU_strparse_r(char* s, char delim, char** savedptr); /* Like strtok, but if 2 consecutive delim are found, an empty string is returned (s[0] = 0) */
 SKYUTILS_API void SU_ExtractFileName(const char Path[],char FileName[],const int len); /* Extracts file name (with suffix) from path */
 SKYUTILS_API char *SU_strchrl(const char *s,const char *l,char *found); /* Searchs the first occurence of one char of l[i] in s, and returns it in found */
 SKYUTILS_API char *SU_strrchrl(const char *s,const char *l,char *found); /* Same as SU_strchrl but starting from the end of the string */
