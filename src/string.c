@@ -651,7 +651,7 @@ SKYUTILS_API char *SU_strerror(int ErrorCode)
 {
   char *p;
 
-  if(FormatMessage(FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,NULL,ErrorCode,MAKELANGID(LANG_NEUTRAL,SUBLANG_DEFAULT),_SU_w32ErrMsg,sizeof(_SU_w32ErrMsg),NULL) == 0)
+  if(FormatMessageA(FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,NULL,ErrorCode,MAKELANGID(LANG_NEUTRAL,SUBLANG_DEFAULT),_SU_w32ErrMsg,sizeof(_SU_w32ErrMsg),NULL) == 0)
   {
     snprintf(_SU_w32ErrMsg,sizeof(_SU_w32ErrMsg),"#%d",ErrorCode);
     return _SU_w32ErrMsg;
