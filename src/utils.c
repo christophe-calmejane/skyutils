@@ -518,7 +518,7 @@ SKYUTILS_API void SU_SetDebugLevel(const char AppName[],const int Level)
   if(SU_DebugAppName != NULL)
     free(SU_DebugAppName);
   if(AppName == NULL)
-    SU_DebugAppName = "SkyUtils";
+    SU_DebugAppName = SU_strdup("SkyUtils");
   else
     SU_DebugAppName = SU_strdup(AppName);
   SU_DebugLevel = Level;
