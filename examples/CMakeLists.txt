@@ -2,7 +2,9 @@
 
 add_subdirectory(AppendArchiveToBinary)
 add_subdirectory(CreateArchive)
-add_subdirectory(ExtractArchive)
+if(WIN32)
+	add_subdirectory(ExtractArchive)
+endif()
 add_subdirectory(ExtractArchiveFromBinary)
 add_subdirectory(TestArchive)
 add_subdirectory(TestBuffer)
