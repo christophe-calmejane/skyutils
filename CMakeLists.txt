@@ -1,0 +1,35 @@
+cmake_minimum_required(VERSION 3.0.2)
+
+# Force SSL configurations into configurations
+set(CMAKE_CONFIGURATION_TYPES Debug Release DebugSSL ReleaseSSL)
+set(CMAKE_CONFIGURATION_TYPES ${CMAKE_CONFIGURATION_TYPES} CACHE STRING "Append user-defined configuration to list of configurations to make it usable in Visual Studio" FORCE)
+
+# Must declare the project after $CMAKE_CONFIGURATION_TYPES or it won't be used correctly
+project(skyutils C)
+
+include_directories(include)
+
+# Global flags
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DSU_ENABLE_ANSI_CODE -D_REENTRANT -DSU_USE_DL -DSU_USE_ARCH")
+
+# Flags to add on Windows
+if(WIN32)
+	set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -D_CRT_SECURE_NO_DEPRECATE -D_CRT_SECURE_NO_WARNINGS -D_WINSOCK_DEPRECATED_NO_WARNINGS")
+endif()
+
+# Flags to add for DEBUG
+set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -DDEBUG")
+
+# Flags for SSL compilation
+set(CMAKE_C_FLAGS_DEBUGSSL "${CMAKE_C_FLAGS_DEBUG} -DSU_USE_SSL")
+set(CMAKE_CXX_FLAGS_DEBUGSSL "${CMAKE_CXX_FLAGS_DEBUG}")
+set(CMAKE_EXE_LINKER_FLAGS_DEBUGSSL "${CMAKE_EXE_LINKER_FLAGS_DEBUG}")
+set(CMAKE_SHARED_LINKER_FLAGS_DEBUGSSL "${CMAKE_SHARED_LINKER_FLAGS_DEBUG}")
+set(CMAKE_C_FLAGS_RELEASESSL "${CMAKE_C_FLAGS_RELEASE} -DSU_USE_SSL")
+set(CMAKE_CXX_FLAGS_RELEASESSL "${CMAKE_CXX_FLAGS_RELEASE}")
+set(CMAKE_EXE_LINKER_FLAGS_RELEASESSL "${CMAKE_EXE_LINKER_FLAGS_RELEASE}")
+set(CMAKE_SHARED_LINKER_FLAGS_RELEASESSL "${CMAKE_SHARED_LINKER_FLAGS_RELEASE}")
+
+add_subdirectory(src)
+add_subdirectory(examples)
+add_subdirectory(tools)

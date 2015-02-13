@@ -1,6 +1,6 @@
 /******************************************************************************/
 /* Skyutils functions - Chained list,socket,string,utils,web,threads, archive */
-/* (c) Christophe CALMEJANE (Ze KiLleR) - 1999-2014                           */
+/* (c) Christophe CALMEJANE (Ze KiLleR) - 1999-2015                           */
 /******************************************************************************/
 
 /*
@@ -28,7 +28,7 @@
 #endif /* FD_SETSIZE */
 #define FD_SETSIZE 256
 
-#define SKYUTILS_VERSION "4.10"
+#define SKYUTILS_VERSION "5.00"
 #define SKYUTILS_AUTHOR "Christophe Calméjane"
 
 #if defined(__MACH__) || defined(_AIX)

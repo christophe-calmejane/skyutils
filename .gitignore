@@ -11,9 +11,5 @@
 *.sdf
 *.opensdf
 
-/examples/*.exe
-/examples/*.obj
-
-/src/Windows/skyutils/Debug
-/src/Windows/skyutils/Release
-
+# CMake build folder
+/Build
