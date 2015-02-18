@@ -29,13 +29,13 @@ int main()
   }
 
   /* Sample INT value */
-  SU_RB_GetIntValue(KEY_INT, DEFAULT_INT, &val);
+  SU_RB_GetIntValue(KEY_INT, &val, DEFAULT_INT);
   printf("Get INT value from '%s' (default is %d) : %d\n",KEY_INT,DEFAULT_INT,val);
 
   printf("Call to Set INT value in '%s' with value %d\n",KEY_INT,SET_INT);
   SU_RB_SetIntValue(KEY_INT,SET_INT);
 
-  SU_RB_GetIntValue(KEY_INT, DEFAULT_INT, &val);
+  SU_RB_GetIntValue(KEY_INT, &val, DEFAULT_INT);
   printf("Get INT value from '%s' (default is %d) : %d\n",KEY_INT,DEFAULT_INT,val);
   
   /* Sample STR value */
@@ -49,13 +49,13 @@ int main()
   printf("Get STR value from '%s' (default is %s) : %s\n",KEY_STR,DEFAULT_STR,buf);
   
   /* Sample Default SubKey Value */
-  SU_RB_GetIntValue(KEY_PATH_BASE, DEFAULT_INT, &val);
+  SU_RB_GetIntValue(KEY_PATH_BASE, &val, DEFAULT_INT);
   printf("Get SubKey default INT value from '%s' (default is %d) : %d\n",KEY_PATH_BASE,DEFAULT_INT,val);
 
   printf("Call to Set INT value in Default SubKey '%s' with value %d\n",KEY_PATH_BASE,SET_INT);
   SU_RB_SetIntValue(KEY_PATH_BASE,SET_INT);
 
-  SU_RB_GetIntValue(KEY_PATH_BASE, DEFAULT_INT, &val);
+  SU_RB_GetIntValue(KEY_PATH_BASE, &val, DEFAULT_INT);
   printf("Get SubKey default INT value from '%s' (default is %d) : %d\n",KEY_PATH_BASE,DEFAULT_INT,val);
   
   /* Sample Open/Create Keys */

@@ -7,8 +7,6 @@ set(CMAKE_CONFIGURATION_TYPES ${CMAKE_CONFIGURATION_TYPES} CACHE STRING "Append 
 # Must declare the project after $CMAKE_CONFIGURATION_TYPES or it won't be used correctly
 project(skyutils C)
 
-include_directories(include)
-
 # Global flags
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DSU_ENABLE_ANSI_CODE -D_REENTRANT -DSU_USE_DL -DSU_USE_ARCH")
 

@@ -1,5 +1,7 @@
 # Samples CMake file
 
+include_directories(../include)
+
 add_subdirectory(AppendArchiveToBinary)
 add_subdirectory(CreateArchive)
 if(WIN32)
