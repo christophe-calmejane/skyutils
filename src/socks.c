@@ -705,8 +705,8 @@ SKYUTILS_API int SU_UDPReceiveFrom(SU_PServerInfo SI,char *Text,int len,char **i
   if(!Blocking)
   {
 #ifdef _WIN32
-    i = 1;
-    ioctlsocket(SI->sock,FIONBIO,(unsigned long *)&i);
+    unsigned long _ioctlval = 1;
+		ioctlsocket(SI->sock, FIONBIO, &_ioctlval);
 #else /* !_WIN32 */
     fcntl(SI->sock,F_SETFL,O_NONBLOCK);
 #endif /* _WIN32 */
@@ -735,8 +735,8 @@ SKYUTILS_API int SU_UDPReceiveFromSin(SU_PServerInfo SI,char *Text,int len,struc
   if(!Blocking)
   {
 #ifdef _WIN32
-    i = 1;
-    ioctlsocket(SI->sock,FIONBIO,(unsigned long *)&i);
+		unsigned long _ioctlval = 1;
+		ioctlsocket(SI->sock, FIONBIO, &_ioctlval);
 #else /* !_WIN32 */
     fcntl(SI->sock,F_SETFL,O_NONBLOCK);
 #endif /* _WIN32 */
@@ -763,8 +763,8 @@ SKYUTILS_API int SU_SetTcpOpt(SU_SOCKET sock,int Opt,int value)
 SKYUTILS_API bool SU_SetSocketBlocking(SU_SOCKET sock,bool Block)
 {
 #ifdef _WIN32
-  int v = Block?0:1;
-	return ioctlsocket(sock,FIONBIO,(unsigned long *)&v) != SOCKET_ERROR;
+	unsigned long _ioctlval  = Block ? 0 : 1;
+	return ioctlsocket(sock, FIONBIO, &_ioctlval) != SOCKET_ERROR;
 #else /* !_WIN32 */
   int  ret = 0;
   ret = fcntl (sock, F_GETFL, 0);

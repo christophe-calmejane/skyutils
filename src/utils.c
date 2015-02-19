@@ -304,7 +304,7 @@ SKYUTILS_API char *SU_LoadUserHeaderFile(const char FName[])
   FILE *fp;
   char *buf;
   char S[1024];
-  int len;
+	size_t len;
 
   fp = fopen(FName,"rt");
   if(fp == NULL)
